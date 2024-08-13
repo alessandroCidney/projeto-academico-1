@@ -17,7 +17,19 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }))
       })
     },
+    '@nuxt/eslint',
   ],
+
+  eslint: {
+    config: {
+      stylistic: {
+        indent: 2,
+        semi: false,
+        commaDangle: 'always-multiline',
+        quotes: 'single',
+      },
+    },
+  },
 
   vite: {
     vue: {
