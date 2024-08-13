@@ -1,5 +1,7 @@
 <template>
   <div>
-    Index
+    <v-btn>
+      Teste
+    </v-btn>
   </div>
 </template>
