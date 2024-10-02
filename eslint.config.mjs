@@ -48,6 +48,8 @@ export default withNuxt(
 
       '@typescript-eslint/prefer-optional-chain': ['warn'],
 
+      '@stylistic/space-before-function-paren': ['warn', 'always'],
+
       'vue/no-mutating-props': ['warn'],
 
       'import/order': [

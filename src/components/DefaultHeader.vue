@@ -1,12 +1,18 @@
 <template>
   <v-app-bar
     color="primary"
-    class="px-4"
+    class="pl-5 pr-2"
   >
     <template #prepend>
       <v-img
         src="@/assets/images/logos/white.svg"
         width="150px"
+      />
+    </template>
+
+    <template #append>
+      <v-btn
+        icon="mdi-magnify"
       />
     </template>
   </v-app-bar>
