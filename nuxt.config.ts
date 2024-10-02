@@ -42,5 +42,13 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern',
+        },
+      },
+    },
   },
 })
