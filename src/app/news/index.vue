@@ -4,6 +4,20 @@
       Últimas notícias
     </h1>
 
+    <v-fab
+      class="newItemFab"
+      color="primary"
+      size="large"
+      icon
+    >
+      <v-icon
+        color="white"
+        size="large"
+      >
+        mdi-plus
+      </v-icon>
+    </v-fab>
+
     <div class="cardsList">
       <v-card
         v-for="item in items"
@@ -51,3 +65,16 @@ function generateFakeArray () {
 
 const items = ref(generateFakeArray())
 </script>
+
+<style lang="scss">
+.newsPage {
+  padding-bottom: 120px !important;
+
+  .newItemFab {
+    position: fixed;
+    bottom: 120px;
+    right: 70px;
+    z-index: 2;
+  }
+}
+</style>
