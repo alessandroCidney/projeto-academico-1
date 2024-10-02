@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="loginPage">
     <v-img
       src="@/assets/images/photos/team.jpg"
       width="100%"
@@ -61,5 +61,9 @@
 <style lang="scss" scoped>
 .teamImageOverlay {
   background-color: rgb(var(--v-theme-primary), .4);
+}
+
+.loginPage {
+  height: 100vh;
 }
 </style>
