@@ -54,7 +54,7 @@
 import { ref } from 'vue'
 
 function generateFakeArray () {
-  return [0, 1, 2, 3, 4, 5, 6, 7].map(index => ({
+  return [1, 2, 3, 4, 5, 6, 7].map(index => ({
     _id: `noticia-${index}`,
     title: `Notícia ${index}`,
     description: `Esta é a descrição da Notícia ${index}.`,

@@ -1,13 +1,15 @@
 <template>
   <div class="bg-primary mobileNavigationBar fillWidth">
     <v-tabs
+      v-model="currentRoute"
       align-tabs="center"
-      color="white"
+      selected-class="text-white"
       stacked
     >
       <v-tab
         v-for="tab in tabs"
         :key="tab.route"
+        :value="tab.route"
         class="normalLetterSpacing"
       >
         <v-icon class="mb-1">
@@ -21,7 +23,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+
+import { useRoute, useRouter } from '#imports'
+
+const route = useRoute()
+const router = useRouter()
+
+const currentRoute = computed({
+  get () {
+    return route.path
+  },
+
+  async set (newPath) {
+    await router.push({ path: newPath })
+  },
+})
 
 const tabs = ref([
   {
