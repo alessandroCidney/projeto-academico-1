@@ -1,5 +1,5 @@
 <template>
-  <div class="newsPage pa-10">
+  <div class="articlesPage pa-10">
     <h1 class="mb-10">
       Artigos e Conteúdos
     </h1>
@@ -9,6 +9,7 @@
       color="primary"
       size="large"
       icon
+      @click="$router.push(`/articles/create`)"
     >
       <v-icon
         color="white"
@@ -27,6 +28,7 @@
           height="120px"
           class="mb-5"
           flat
+          @click="$router.push(`/articles/${item._id}`)"
         >
           <div class="d-flex align-center justify-start">
             <div>
@@ -80,23 +82,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-function generateFakeArray () {
-  return [1, 2, 3, 4, 5, 6, 7].map(index => ({
-    _id: `artigo-${index}`,
-    title: `Artigo ${index}`,
-    description: `Esta é a descrição da Artigo ${index}.`,
-    imageUrl: 'https://cdn.pixabay.com/photo/2023/10/29/14/37/pumpkins-8350480_1280.jpg',
-    tags: ['Tag 01'],
-  }))
-}
+import { useArticlesService } from '@/composables/services/useArticlesService'
 
-const items = ref(generateFakeArray())
+const articlesService = useArticlesService()
+
+const items = ref<Awaited<ReturnType<typeof articlesService.list>>>()
+
+onMounted(async () => {
+  items.value = await articlesService.list()
+})
 </script>
 
 <style lang="scss">
-.newsPage {
+.articlesPage {
   padding-bottom: 120px !important;
 
   .newItemFab {
