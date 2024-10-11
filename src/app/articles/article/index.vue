@@ -19,7 +19,7 @@
           @click="$router.push('/articles')"
         />
 
-        <h1 class="text-h5 font-weight-bold">
+        <h1 class="text-h5 font-weight-bold  font-weight-bold">
           {{ articleData.title }}
         </h1>
       </div>
