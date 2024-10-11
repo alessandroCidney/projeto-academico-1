@@ -14,7 +14,9 @@
       <div class="d-flex align-center justify-start">
         <v-btn
           icon="mdi-chevron-left"
-          variant="text"
+          variant="tonal"
+          class="mr-5"
+          @click="$router.push('/articles')"
         />
 
         <h1 class="text-h5 font-weight-bold">
