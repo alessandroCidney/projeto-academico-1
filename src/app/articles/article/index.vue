@@ -131,7 +131,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.articlesPage {
+.articlePage {
   padding-bottom: 120px !important;
 }
 </style>

@@ -44,8 +44,8 @@
         </v-list-item>
 
         <v-list-item
+          to="/account/reset-password"
           class="py-5"
-          @click="() => {}"
         >
           <template #title>
             Redefinição de senha

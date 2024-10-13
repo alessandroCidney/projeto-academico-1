@@ -85,6 +85,8 @@ import UploadDropzone from '@/components/commons/UploadDropzone.vue'
 
 <style lang="scss">
 .articleCreationPage {
+  padding-bottom: 120px !important;
+
   .titleTextField {
     width: calc(100% - 48px - 20px);
 
