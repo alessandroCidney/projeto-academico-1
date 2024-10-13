@@ -1,6 +1,6 @@
 <template>
-  <div class="articlesPage pa-10">
-    <h1 class="text-h5 font-weight-bold mb-10">
+  <div class="pageContainer">
+    <h1 class="text-h5 font-weight-bold">
       Artigos e Conteúdos
     </h1>
 
@@ -94,16 +94,3 @@ onMounted(async () => {
   items.value = await articlesService.list()
 })
 </script>
-
-<style lang="scss">
-.articlesPage {
-  padding-bottom: 120px !important;
-
-  .newItemFab {
-    position: fixed;
-    bottom: 120px;
-    right: 70px;
-    z-index: 2;
-  }
-}
-</style>

@@ -8,7 +8,7 @@
 
   <div
     v-else-if="articleData"
-    class="articlePage py-10 px-5"
+    class="pageContainer"
   >
     <div class="d-flex align-center justify-space-between mb-5">
       <div class="d-flex align-center justify-start">
@@ -129,9 +129,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style lang="scss">
-.articlePage {
-  padding-bottom: 120px !important;
-}
-</style>

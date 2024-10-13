@@ -1,6 +1,6 @@
 <template>
   <div
-    class="articleCreationPage py-10 px-5"
+    class="pageContainer articleCreationPage"
   >
     <div class="d-flex align-center justify-space-between mb-5">
       <div class="d-flex align-center justify-start fillWidth">
@@ -85,8 +85,6 @@ import UploadDropzone from '@/components/commons/UploadDropzone.vue'
 
 <style lang="scss">
 .articleCreationPage {
-  padding-bottom: 120px !important;
-
   .titleTextField {
     width: calc(100% - 48px - 20px);
 

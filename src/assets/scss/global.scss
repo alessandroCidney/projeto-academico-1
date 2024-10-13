@@ -28,3 +28,18 @@ a {
     font-weight: bold;
   }
 }
+
+.pageContainer {
+  padding: 40px 30px 120px 30px;
+
+  > h1 {
+    margin-bottom: 40px;
+  }
+
+  .newItemFab {
+    position: fixed;
+    bottom: 120px;
+    right: 70px;
+    z-index: 2;
+  }
+}

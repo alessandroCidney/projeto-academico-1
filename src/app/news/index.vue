@@ -1,6 +1,6 @@
 <template>
-  <div class="newsPage pa-10">
-    <h1 class="text-h5 font-weight-bold mb-10">
+  <div class="pageContainer">
+    <h1 class="text-h5 font-weight-bold">
       Últimas notícias
     </h1>
 
@@ -65,16 +65,3 @@ function generateFakeArray () {
 
 const items = ref(generateFakeArray())
 </script>
-
-<style lang="scss">
-.newsPage {
-  padding-bottom: 120px !important;
-
-  .newItemFab {
-    position: fixed;
-    bottom: 120px;
-    right: 70px;
-    z-index: 2;
-  }
-}
-</style>

@@ -12,6 +12,11 @@
 
     <template #append>
       <v-btn
+        to="/admin/users"
+        icon="mdi-star"
+      />
+
+      <v-btn
         icon="mdi-magnify"
       />
     </template>
