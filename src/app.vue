@@ -31,10 +31,11 @@ const mainStore = useMainStore()
 const accountStore = useAccountStore()
 
 onMounted(async () => {
-  console.log('waiting', mainStore.loadingAuthPlugin)
+  console.log('start waiting app.vue', mainStore.loadingAuthPlugin)
+
   await waitFor(() => !mainStore.loadingAuthPlugin)
 
-  console.log('end waiting')
+  console.log('end waiting app.vue')
 
   if (route.name === 'login' && accountStore.isAuthenticated) {
     console.log('navigate to index')

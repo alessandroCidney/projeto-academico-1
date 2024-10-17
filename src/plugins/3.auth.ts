@@ -17,8 +17,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     try {
       console.log('authUser', authUser)
 
-      await wait(2000)
-
       if (authUser) {
         const userData = await usersService.get(authUser.uid)
 

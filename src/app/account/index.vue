@@ -69,12 +69,23 @@
         color="error"
         size="large"
         block
+        @click="handleSignOut"
       >
         Sair
       </v-btn>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { signOut } from 'firebase/auth'
+
+const nuxtApp = useNuxtApp()
+
+async function handleSignOut () {
+  await signOut(nuxtApp.$firebaseAuth)
+}
+</script>
 
 <style lang="scss">
 .accountPage {

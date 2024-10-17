@@ -86,6 +86,8 @@ import { useNuxtApp } from '#imports'
 
 const nuxtApp = useNuxtApp()
 
+const router = useRouter()
+
 const loadingLoginWithGoogle = ref(false)
 
 const accountStore = useAccountStore()
@@ -103,6 +105,8 @@ async function handleLoginWithGoogle () {
     const userData = await usersService.get(userCredential.user.uid)
 
     accountStore.setFirestoreUserData(userData)
+
+    await router.push('/news')
   } catch (err) {
     console.error('handleLoginWithGoogle error', err)
   } finally {
