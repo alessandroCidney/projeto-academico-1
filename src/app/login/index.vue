@@ -17,6 +17,19 @@
       />
 
       <v-form class="mb-10">
+        <v-btn
+          :loading="loadingLoginWithGoogle"
+          class="normalLetterSpacing mb-5"
+          prepend-icon="mdi-google"
+          variant="tonal"
+          color="error"
+          size="large"
+          block
+          @click="handleLoginWithGoogle"
+        >
+          Entrar com o Google
+        </v-btn>
+
         <v-text-field
           label="E-mail"
           placeholder="user@example.com"
@@ -59,6 +72,44 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+
+import { useAccountStore } from '@/store/account'
+
+import { useUsersService } from '@/composables/services/useUsersService'
+
+import { useNuxtApp } from '#imports'
+
+const nuxtApp = useNuxtApp()
+
+const loadingLoginWithGoogle = ref(false)
+
+const accountStore = useAccountStore()
+
+const usersService = await useUsersService()
+
+async function handleLoginWithGoogle () {
+  try {
+    loadingLoginWithGoogle.value = true
+
+    const googleAuthProvider = new GoogleAuthProvider()
+
+    const userCredential = await signInWithPopup(nuxtApp.$firebaseAuth, googleAuthProvider)
+
+    const userData = await usersService.get(userCredential.user.uid)
+
+    accountStore.setFirestoreUserData(userData)
+  } catch (err) {
+    console.error('handleLoginWithGoogle error', err)
+  } finally {
+    loadingLoginWithGoogle.value = false
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .teamImageOverlay {

@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="mb-5">
       <v-list class="accountPageOptions">
         <v-list-item
           class="py-5"
@@ -58,6 +58,20 @@
           </template>
         </v-list-item>
       </v-list>
+    </div>
+
+    <div>
+      <v-btn
+        to="/login"
+        class="normalLetterSpacing"
+        prepend-icon="mdi-arrow-left"
+        variant="flat"
+        color="error"
+        size="large"
+        block
+      >
+        Sair
+      </v-btn>
     </div>
   </div>
 </template>
