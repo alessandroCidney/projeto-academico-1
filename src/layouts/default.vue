@@ -18,5 +18,7 @@ import MobileNavigationBar from '@/components/MobileNavigationBar.vue'
 <style lang="scss">
 .defaultLayoutMain {
   overflow: auto !important;
+
+  --v-layout-bottom: 80px !important;
 }
 </style>

@@ -25,10 +25,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-import { useRoute, useRouter } from '#imports'
-
 const route = useRoute()
-const router = useRouter()
 
 const currentRoute = computed({
   get () {
@@ -36,7 +33,7 @@ const currentRoute = computed({
   },
 
   async set (newPath) {
-    await router.push({ path: newPath })
+    await navigateTo({ path: newPath })
   },
 })
 

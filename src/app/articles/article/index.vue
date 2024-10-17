@@ -1,6 +1,11 @@
 <template>
-  <div v-if="loadingItems">
+  <div
+    v-if="loadingItems"
+    class="fill-width fill-height d-flex align-center justify-center"
+  >
     <v-progress-circular
+      size="150"
+      width="8"
       color="primary"
       indeterminate
     />
