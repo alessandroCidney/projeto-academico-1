@@ -16,3 +16,34 @@ export function waitFor (conditionFn: (...params: unknown[]) => boolean) {
     }
   })
 }
+
+export function selectFile (callbackFn: (file: File) => void) {
+  const input: HTMLInputElement = document.createElement('input')
+
+  input.type = 'file'
+  input.style.display = 'none'
+
+  input.addEventListener('input', () => {
+    if (input.files?.[0]) {
+      callbackFn(input.files[0])
+    }
+  })
+
+  document.body.appendChild(input)
+
+  input.click()
+}
+
+export function convertFileToBase64 (file: File): Promise<string> {
+  const reader = new FileReader()
+
+  return new Promise<string>((resolve) => {
+    reader.addEventListener('load', () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result)
+      }
+    })
+
+    reader.readAsDataURL(file)
+  })
+}

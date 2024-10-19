@@ -1,5 +1,6 @@
 <template>
-  <div
+  <v-form
+    v-model="isValid"
     class="pageContainer newsCreationPage"
   >
     <div class="d-flex align-center justify-space-between mb-5">
@@ -35,7 +36,8 @@
 
     <div class="mb-5">
       <upload-dropzone
-        height="100px"
+        v-model="selectedFile"
+        height="200px"
       />
     </div>
 
@@ -73,9 +75,10 @@
       </v-btn>
 
       <v-btn
+        :disabled="!isValid || !selectedFile"
         :loading="loadingCreate"
         :style="{ width: '50% !important' }"
-        class="normalLetterSpacing text-white"
+        class="normalLetterSpacing"
         color="primary"
         variant="flat"
         size="large"
@@ -84,7 +87,7 @@
         Salvar
       </v-btn>
     </div>
-  </div>
+  </v-form>
 </template>
 
 <script setup lang="ts">
@@ -103,6 +106,8 @@ const newsService = useNewsService()
 const loadingCreate = ref(false)
 
 const payload = ref<Parameters<typeof newsService.create>[1]>(new FirestoreNews())
+const selectedFile = ref<File>()
+const isValid = ref()
 
 async function handleCreate () {
   try {
