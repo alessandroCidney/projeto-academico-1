@@ -103,6 +103,7 @@
         variant="text"
         size="large"
         icon
+        @click="handleShare"
       >
         <v-icon size="large">
           mdi-share-variant
@@ -220,6 +221,24 @@ async function toggleLike () {
     console.error(err)
   } finally {
     loadingToggleLike.value = false
+  }
+}
+
+async function handleShare () {
+  try {
+    if (!newsData.value) {
+      throw new Error('Empty data')
+    }
+
+    const shareData = {
+      title: newsData.value.title,
+      text: newsData.value.description,
+      url: window.location.href,
+    }
+
+    await navigator.share(shareData)
+  } catch (err) {
+    console.error(err)
   }
 }
 </script>
