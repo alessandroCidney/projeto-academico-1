@@ -56,5 +56,17 @@ export function useNewsService () {
 
       return await firestoreCrud.create(itemId, payload)
     },
+
+    async update (itemId: string, payload: FirestoreNews, imageFile?: File) {
+      if (imageFile) {
+        const thumbnailRef = storageRef(nuxtApp.$firebaseStorage, `news/${itemId}/thumbnail.${imageFile.name.split('.').pop()}`)
+
+        const snapshot = await uploadBytes(thumbnailRef, imageFile)
+
+        payload.imagePath = snapshot.metadata.fullPath
+      }
+
+      return await firestoreCrud.update(itemId, payload)
+    },
   }
 }

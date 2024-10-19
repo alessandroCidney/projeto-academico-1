@@ -35,7 +35,9 @@
 
     <div class="mb-5">
       <upload-dropzone
-        height="100px"
+        v-model="selectedFile"
+        :custom-file-url="payload.imageUrl"
+        height="200px"
       />
     </div>
 
@@ -103,6 +105,8 @@ const newsService = useNewsService()
 const loadingGet = ref(false)
 const loadingUpdate = ref(false)
 
+const selectedFile = ref<File>()
+
 const payload = ref<Parameters<typeof newsService.create>[1]>(new FirestoreNews())
 
 onMounted(async () => {
@@ -134,11 +138,15 @@ async function handleUpdate () {
 
     const _id = payload.value._id
 
-    await newsService.create(_id, {
-      ...payload.value,
-      authorId: accountStore.authUserData?.uid,
+    await newsService.update(
       _id,
-    })
+      {
+        ...payload.value,
+        authorId: accountStore.authUserData?.uid,
+        _id,
+      },
+      selectedFile.value,
+    )
 
     await navigateTo({ path: '/news' })
   } catch (err) {

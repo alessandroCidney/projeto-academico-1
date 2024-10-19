@@ -3,8 +3,8 @@
     :style="{
       width,
       height,
-      backgroundColor: selectedFileUrl ? 'transparent' : 'rgb(var(--v-theme-primary), .2)',
-      backgroundImage: selectedFileUrl ? `url(${selectedFileUrl})` : 'none',
+      backgroundColor: currentFileUrl ? 'transparent' : 'rgb(var(--v-theme-primary), .2)',
+      backgroundImage: currentFileUrl ? `url(${currentFileUrl})` : 'none',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       backgroundPosition: 'center center',
@@ -19,13 +19,26 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   width: { type: String, default: '100%' },
   height: { type: String, default: '100%' },
+  customFileUrl: { type: String, default: undefined },
 })
 
 const selectedFile = defineModel<File | undefined>()
 const selectedFileUrl = ref<string>()
+
+const currentFileUrl = computed(() => {
+  if (selectedFileUrl.value) {
+    return selectedFileUrl.value
+  }
+
+  if (props.customFileUrl) {
+    return props.customFileUrl
+  }
+
+  return undefined
+})
 
 function handleSelectFile () {
   selectFile(async (file) => {
