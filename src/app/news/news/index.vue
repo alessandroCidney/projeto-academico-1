@@ -33,6 +33,7 @@
         v-if="newsData.authorId === accountStore.authUserData?.uid"
       >
         <v-btn
+          :to="`/news/${newsData._id}/edit`"
           icon="mdi-pencil"
           variant="text"
         />
@@ -109,8 +110,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
 import { useNewsService } from '@/composables/services/useNewsService'
 
 import { useAccountStore } from '~/store/account'

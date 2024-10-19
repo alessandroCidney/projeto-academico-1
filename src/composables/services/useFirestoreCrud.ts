@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc } from 'firebase/firestore'
 
 export function useFirestoreCrud<BaseObject extends object> (path: string) {
   const nuxtApp = useNuxtApp()
@@ -24,16 +24,32 @@ export function useFirestoreCrud<BaseObject extends object> (path: string) {
       const docData = docSnap.data()
 
       if (docData) {
-        return docData as BaseObject
+        return ({ ...docData, _id: itemId }) as BaseObject
       } else {
         throw new Error('Not found')
       }
     },
 
     async create (itemId: string, payload: BaseObject) {
+      if (!itemId) {
+        throw new Error('Invalid ID')
+      }
+
       const docRef = doc(nuxtApp.$firebaseFirestore, path, itemId)
 
       await setDoc(docRef, payload)
+
+      return _.cloneDeep(payload)
+    },
+
+    async update (itemId: string, payload: BaseObject) {
+      if (!itemId) {
+        throw new Error('Invalid ID')
+      }
+
+      const docRef = doc(nuxtApp.$firebaseFirestore, path, itemId)
+
+      await updateDoc(docRef, payload)
 
       return _.cloneDeep(payload)
     },
