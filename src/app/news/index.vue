@@ -5,6 +5,7 @@
     </h1>
 
     <v-fab
+      to="/news/create"
       class="newItemFab"
       color="primary"
       size="large"
@@ -24,6 +25,7 @@
         :key="item._id"
         height="330px"
         class="mb-7"
+        @click="navigateTo({ path: `/news/${item._id}` })"
       >
         <v-img
           :src="item.imageUrl"
