@@ -51,17 +51,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useNewsService } from '~/composables/services/useNewsService'
 
-function generateFakeArray () {
-  return [1, 2, 3, 4, 5, 6, 7].map(index => ({
-    _id: `noticia-${index}`,
-    title: `Notícia ${index}`,
-    description: `Esta é a descrição da Notícia ${index}.`,
-    imageUrl: 'https://cdn.pixabay.com/photo/2023/10/29/14/37/pumpkins-8350480_1280.jpg',
-    tags: ['Tag 01', 'Tag 02'],
-  }))
+const newsService = useNewsService()
+
+const loadingNews = ref(false)
+
+const items = ref<Awaited<ReturnType<typeof newsService.list>>>()
+
+onMounted(() => {
+  handleList()
+})
+
+async function handleList () {
+  try {
+    loadingNews.value = true
+
+    items.value = await newsService.list()
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loadingNews.value = false
+  }
 }
-
-const items = ref(generateFakeArray())
 </script>

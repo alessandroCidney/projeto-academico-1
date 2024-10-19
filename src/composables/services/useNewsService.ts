@@ -1,6 +1,6 @@
 import { useFirestoreCrud } from './useFirestoreCrud'
 
-interface FirestoreArticle {
+interface FirestoreNews {
   _id: string
   title: string
   description: string
@@ -9,8 +9,8 @@ interface FirestoreArticle {
   tags: string[]
 }
 
-export function useArticlesService () {
-  const firestoreCrud = useFirestoreCrud<FirestoreArticle>('articles')
+export function useNewsService () {
+  const firestoreCrud = useFirestoreCrud<FirestoreNews>('news')
 
   return firestoreCrud
 }

@@ -1,6 +1,7 @@
 import { useFirestoreCrud } from './useFirestoreCrud'
 
 interface FirestoreUser {
+  _id: string
   displayName: string
   createdAt: string
 }
