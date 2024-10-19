@@ -119,11 +119,15 @@ async function handleCreate () {
 
     const _id = uuidV4()
 
-    await newsService.create(_id, {
-      ...payload.value,
-      authorId: accountStore.authUserData?.uid,
+    await newsService.create(
       _id,
-    })
+      {
+        ...payload.value,
+        authorId: accountStore.authUserData?.uid,
+        _id,
+      },
+      selectedFile.value as File,
+    )
 
     await navigateTo({ path: '/news' })
   } catch (err) {
