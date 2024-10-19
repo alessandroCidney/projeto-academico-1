@@ -2,6 +2,8 @@ import { getDownloadURL, ref as storageRef, uploadBytes } from 'firebase/storage
 
 import { useFirestoreCrud } from './useFirestoreCrud'
 
+import type { FirestoreComment, FirestoreLike } from '~/types'
+
 export function useNewsService () {
   const nuxtApp = useNuxtApp()
 
@@ -61,7 +63,13 @@ export function useNewsService () {
 }
 
 export function useNewsLikeService (newsId: string) {
-  const firestoreCrud = useFirestoreCrud<FirestoreNewsLike>(`news/${newsId}/likes`)
+  const firestoreCrud = useFirestoreCrud<FirestoreLike>(`news/${newsId}/likes`)
+
+  return firestoreCrud
+}
+
+export function useNewsCommentService (newsId: string) {
+  const firestoreCrud = useFirestoreCrud<FirestoreComment>(`news/${newsId}/comments`)
 
   return firestoreCrud
 }
@@ -77,9 +85,4 @@ export class FirestoreNews {
   authorId = ''
   createdAt = ''
   updatedAt = ''
-}
-
-export class FirestoreNewsLike {
-  authorId = ''
-  createdAt = ''
 }

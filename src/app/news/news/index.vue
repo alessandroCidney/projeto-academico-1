@@ -55,7 +55,7 @@
       <v-img
         :src="newsData.imageUrl"
         class="rounded-lg"
-        height="150px"
+        height="200px"
         width="100%"
         cover
       />
@@ -92,9 +92,10 @@
         variant="text"
         size="large"
         icon
+        @click="showComments = !showComments"
       >
         <v-icon size="large">
-          mdi-message-outline
+          {{ showComments ? 'mdi-message' : 'mdi-message-outline' }}
         </v-icon>
       </v-btn>
 
@@ -108,11 +109,20 @@
         </v-icon>
       </v-btn>
     </div>
+
+    <comments-list
+      v-if="showComments"
+      :list="newsCommentService.list"
+      :create="newsCommentService.create"
+      :update="newsCommentService.update"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useNewsService, useNewsLikeService } from '@/composables/services/useNewsService'
+import { useNewsService, useNewsLikeService, useNewsCommentService } from '@/composables/services/useNewsService'
+
+import CommentsList from './components/CommentsList/index.vue'
 
 import { useAccountStore } from '~/store/account'
 
@@ -126,11 +136,13 @@ const accountStore = useAccountStore()
 
 const newsService = useNewsService()
 const newsLikeService = useNewsLikeService(route.params.newsId)
+const newsCommentService = useNewsCommentService(route.params.newsId)
 
 const loadingGet = ref(false)
 const loadingRemove = ref(false)
 const loadingToggleLike = ref(false)
 const alreadyLiked = ref(false)
+const showComments = ref(false)
 
 const newsData = ref<Awaited<ReturnType<typeof newsService.get>>>()
 
