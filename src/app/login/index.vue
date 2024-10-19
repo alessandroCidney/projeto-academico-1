@@ -78,19 +78,13 @@ import { ref } from 'vue'
 
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 
-import { useAccountStore } from '@/store/account'
-
 import { useUsersService } from '@/composables/services/useUsersService'
 
 import { useNuxtApp } from '#imports'
 
 const nuxtApp = useNuxtApp()
 
-const router = useRouter()
-
 const loadingLoginWithGoogle = ref(false)
-
-const accountStore = useAccountStore()
 
 const usersService = await useUsersService()
 
@@ -102,11 +96,9 @@ async function handleLoginWithGoogle () {
 
     const userCredential = await signInWithPopup(nuxtApp.$firebaseAuth, googleAuthProvider)
 
-    const userData = await usersService.get(userCredential.user.uid)
+    await usersService.get(userCredential.user.uid)
 
-    accountStore.setFirestoreUserData(userData)
-
-    await router.push('/news')
+    reloadNuxtApp()
   } catch (err) {
     console.error('handleLoginWithGoogle error', err)
   } finally {

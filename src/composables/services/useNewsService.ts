@@ -1,12 +1,13 @@
 import { useFirestoreCrud } from './useFirestoreCrud'
 
-interface FirestoreNews {
-  _id: string
-  title: string
-  description: string
-  content: string
-  imageUrl: string
-  tags: string[]
+export class FirestoreNews {
+  _id = ''
+  title = ''
+  description = ''
+  content = ''
+  imageUrl = ''
+  tags: string[] = []
+  authorId = ''
 }
 
 export function useNewsService () {

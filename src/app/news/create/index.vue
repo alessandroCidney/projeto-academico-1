@@ -5,13 +5,14 @@
     <div class="d-flex align-center justify-space-between mb-5">
       <div class="d-flex align-center justify-start fillWidth">
         <v-btn
+          to="/news"
           icon="mdi-chevron-left"
           variant="tonal"
           class="mr-5"
-          @click="$router.push('/news')"
         />
 
         <v-text-field
+          v-model="payload.title"
           class="titleTextField font-weight-bold mb-1"
           placeholder="Informe um título"
           variant="solo"
@@ -23,6 +24,7 @@
 
     <div class="mb-5 px-2">
       <v-text-field
+        v-model="payload.description"
         placeholder="Informe uma descrição"
         class="fieldWithoutPadding"
         variant="solo"
@@ -39,6 +41,7 @@
 
     <div class="mb-5 px-2">
       <v-textarea
+        v-model="payload.content"
         placeholder="Informe o conteúdo"
         class="fieldWithoutPadding"
         variant="solo"
@@ -49,15 +52,18 @@
 
     <div class="mb-5 px-2">
       <v-select
+        v-model="payload.tags"
         :items="['Teste']"
         label="Selecionar Tags"
         variant="outlined"
+        multiple
       />
     </div>
 
     <div class="d-flex align-center justify-center">
       <v-btn
         :style="{ width: 'calc(50% - 8px) !important' }"
+        to="/news"
         class="normalLetterSpacing mr-2"
         color="grey-lighten-4"
         variant="flat"
@@ -67,11 +73,13 @@
       </v-btn>
 
       <v-btn
+        :loading="loadingCreate"
         :style="{ width: '50% !important' }"
         class="normalLetterSpacing text-white"
         color="primary"
         variant="flat"
         size="large"
+        @click="handleCreate"
       >
         Salvar
       </v-btn>
@@ -80,7 +88,45 @@
 </template>
 
 <script setup lang="ts">
-import UploadDropzone from '@/components/commons/UploadDropzone.vue'
+import { v4 as uuidV4 } from 'uuid'
+
+import UploadDropzone from '~/components/commons/UploadDropzone.vue'
+
+import { useAccountStore } from '~/store/account'
+
+import { useNewsService, FirestoreNews } from '~/composables/services/useNewsService'
+
+const accountStore = useAccountStore()
+
+const newsService = useNewsService()
+
+const loadingCreate = ref(false)
+
+const payload = ref<Parameters<typeof newsService.create>[1]>(new FirestoreNews())
+
+async function handleCreate () {
+  try {
+    if (!accountStore.authUserData?.uid) {
+      throw new Error('Unauthenticated')
+    }
+
+    loadingCreate.value = true
+
+    const _id = uuidV4()
+
+    await newsService.create(_id, {
+      ...payload.value,
+      authorId: accountStore.authUserData?.uid,
+      _id,
+    })
+
+    await navigateTo({ path: '/news' })
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loadingCreate.value = false
+  }
+}
 </script>
 
 <style lang="scss">

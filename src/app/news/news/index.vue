@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="loadingItems"
+    v-if="loadingGet"
     class="fill-width fill-height d-flex align-center justify-center"
   >
     <v-progress-circular
@@ -18,10 +18,10 @@
     <div class="d-flex align-center justify-space-between mb-5">
       <div class="d-flex align-center justify-start">
         <v-btn
+          to="/news"
           icon="mdi-chevron-left"
           variant="tonal"
           class="mr-5"
-          @click="$router.push('/articles')"
         />
 
         <h1 class="text-h5 font-weight-bold  font-weight-bold">
@@ -29,15 +29,19 @@
         </h1>
       </div>
 
-      <div>
+      <div
+        v-if="newsData.authorId === accountStore.authUserData?.uid"
+      >
         <v-btn
           icon="mdi-pencil"
           variant="text"
         />
 
         <v-btn
+          :loading="loadingRemove"
           icon="mdi-delete"
           variant="text"
+          @click="handleRemove"
         />
       </div>
     </div>
@@ -109,28 +113,52 @@ import { onMounted, ref } from 'vue'
 
 import { useNewsService } from '@/composables/services/useNewsService'
 
-import { useRoute } from '#imports'
+import { useAccountStore } from '~/store/account'
+
+const accountStore = useAccountStore()
 
 const route = useRoute()
 
 const newsService = useNewsService()
 
-const loadingItems = ref(false)
+const loadingGet = ref(false)
+const loadingRemove = ref(false)
 
 const newsData = ref<Awaited<ReturnType<typeof newsService.get>>>()
 
 onMounted(async () => {
+  handleGet()
+})
+
+async function handleGet () {
   if (typeof route.params.newsId !== 'string') {
     throw new Error('Cannot found news ID')
   }
 
   try {
-    loadingItems.value = true
+    loadingGet.value = true
     newsData.value = await newsService.get(route.params.newsId)
   } catch (err) {
     console.error(err)
   } finally {
-    loadingItems.value = false
+    loadingGet.value = false
   }
-})
+}
+
+async function handleRemove () {
+  if (typeof route.params.newsId !== 'string') {
+    throw new Error('Cannot found news ID')
+  }
+
+  try {
+    loadingRemove.value = true
+    await newsService.remove(route.params.newsId)
+
+    await navigateTo({ path: '/news' })
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loadingRemove.value = false
+  }
+}
 </script>

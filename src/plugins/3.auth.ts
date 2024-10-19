@@ -20,11 +20,13 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (authUser) {
         const userData = await usersService.get(authUser.uid)
 
+        accountStore.setAuthUserData(authUser)
         accountStore.setFirestoreUserData(userData)
       }
     } catch (err) {
       console.error('Auth plugin error', err)
 
+      accountStore.setAuthUserData(undefined)
       accountStore.setFirestoreUserData(undefined)
     } finally {
       console.log('end plugin')
