@@ -77,12 +77,14 @@
 
     <div class="d-flex align-center justify-center">
       <v-btn
+        :loading="loadingToggleLike"
         variant="text"
         size="large"
         icon
+        @click="toggleLike"
       >
         <v-icon size="large">
-          mdi-heart-outline
+          {{ alreadyLiked ? 'mdi-heart' : 'mdi-heart-outline' }}
         </v-icon>
       </v-btn>
 
@@ -110,23 +112,31 @@
 </template>
 
 <script setup lang="ts">
-import { useNewsService } from '@/composables/services/useNewsService'
+import { useNewsService, useNewsLikeService } from '@/composables/services/useNewsService'
 
 import { useAccountStore } from '~/store/account'
 
-const accountStore = useAccountStore()
-
 const route = useRoute()
 
+if (typeof route.params.newsId !== 'string') {
+  throw new Error('Cannot found news ID')
+}
+
+const accountStore = useAccountStore()
+
 const newsService = useNewsService()
+const newsLikeService = useNewsLikeService(route.params.newsId)
 
 const loadingGet = ref(false)
 const loadingRemove = ref(false)
+const loadingToggleLike = ref(false)
+const alreadyLiked = ref(false)
 
 const newsData = ref<Awaited<ReturnType<typeof newsService.get>>>()
 
 onMounted(async () => {
   handleGet()
+  handleGetLikeData()
 })
 
 async function handleGet () {
@@ -144,6 +154,21 @@ async function handleGet () {
   }
 }
 
+async function handleGetLikeData () {
+  if (!accountStore.authUserData?.uid) {
+    throw new Error('Unauthenticated')
+  }
+
+  try {
+    loadingToggleLike.value = true
+    alreadyLiked.value = !!(await newsLikeService.get(accountStore.authUserData.uid))
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loadingToggleLike.value = false
+  }
+}
+
 async function handleRemove () {
   if (typeof route.params.newsId !== 'string') {
     throw new Error('Cannot found news ID')
@@ -158,6 +183,31 @@ async function handleRemove () {
     console.error(err)
   } finally {
     loadingRemove.value = false
+  }
+}
+
+async function toggleLike () {
+  try {
+    loadingToggleLike.value = true
+
+    if (!accountStore.authUserData?.uid) {
+      throw new Error('Unauthenticated')
+    }
+
+    if (alreadyLiked.value) {
+      await newsLikeService.remove(accountStore.authUserData.uid)
+    } else {
+      await newsLikeService.create(accountStore.authUserData.uid, {
+        authorId: accountStore.authUserData.uid,
+        createdAt: new Date().toISOString(),
+      })
+    }
+
+    alreadyLiked.value = !alreadyLiked.value
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loadingToggleLike.value = false
   }
 }
 </script>

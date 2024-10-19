@@ -124,6 +124,8 @@ async function handleCreate () {
       {
         ...payload.value,
         authorId: accountStore.authUserData?.uid,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         _id,
       },
       selectedFile.value as File,

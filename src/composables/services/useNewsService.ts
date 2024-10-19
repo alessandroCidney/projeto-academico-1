@@ -2,17 +2,6 @@ import { getDownloadURL, ref as storageRef, uploadBytes } from 'firebase/storage
 
 import { useFirestoreCrud } from './useFirestoreCrud'
 
-export class FirestoreNews {
-  _id = ''
-  title = ''
-  description = ''
-  content = ''
-  imagePath = ''
-  imageUrl = ''
-  tags: string[] = []
-  authorId = ''
-}
-
 export function useNewsService () {
   const nuxtApp = useNuxtApp()
 
@@ -69,4 +58,28 @@ export function useNewsService () {
       return await firestoreCrud.update(itemId, payload)
     },
   }
+}
+
+export function useNewsLikeService (newsId: string) {
+  const firestoreCrud = useFirestoreCrud<FirestoreNewsLike>(`news/${newsId}/likes`)
+
+  return firestoreCrud
+}
+
+export class FirestoreNews {
+  _id = ''
+  title = ''
+  description = ''
+  content = ''
+  imagePath = ''
+  imageUrl = ''
+  tags: string[] = []
+  authorId = ''
+  createdAt = ''
+  updatedAt = ''
+}
+
+export class FirestoreNewsLike {
+  authorId = ''
+  createdAt = ''
 }

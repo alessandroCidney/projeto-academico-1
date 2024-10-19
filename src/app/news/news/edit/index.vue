@@ -143,6 +143,7 @@ async function handleUpdate () {
       {
         ...payload.value,
         authorId: accountStore.authUserData?.uid,
+        updatedAt: new Date().toISOString(),
         _id,
       },
       selectedFile.value,
