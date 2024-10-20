@@ -1,5 +1,5 @@
 <template>
-  <article-content-page
+  <article-edition-page
     v-if="typeof route.params.articleId === 'string'"
     :article-id="route.params.articleId"
     :service="articlesService"
@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import ArticleContentPage from '~/components/articles/ArticleContentPage.vue'
+import ArticleEditionPage from '~/components/articles/ArticleEditionPage.vue'
 
 import { useArticlesService } from '~/composables/services/useArticlesService'
 
