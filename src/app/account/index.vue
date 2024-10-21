@@ -10,18 +10,18 @@
           size="80"
         >
           <v-img
-            src="https://cdn.pixabay.com/photo/2019/07/26/11/33/campaign-4364557_1280.jpg"
+            :src="accountStore.firestoreUserData?.providerPhotoUrl"
           />
         </v-avatar>
       </div>
 
       <div>
         <h2 class="text-h6 font-weight-bold">
-          Nome do usuário
+          {{ accountStore.userDisplayNameStr }}
         </h2>
 
         <div class="text-body-1">
-          Cargo do usuário
+          {{ accountStore.firestoreUserData?.position }}
         </div>
       </div>
     </div>
@@ -29,8 +29,8 @@
     <div class="mb-5">
       <v-list class="accountPageOptions">
         <v-list-item
+          to="/account/personal-data"
           class="py-5"
-          @click="() => {}"
         >
           <template #title>
             Dados pessoais
@@ -79,6 +79,10 @@
 
 <script setup lang="ts">
 import { signOut } from 'firebase/auth'
+
+import { useAccountStore } from '~/store/account'
+
+const accountStore = useAccountStore()
 
 const nuxtApp = useNuxtApp()
 

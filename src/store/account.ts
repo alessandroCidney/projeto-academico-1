@@ -1,15 +1,21 @@
-import type { useUsersService } from '@/composables/services/useUsersService'
 import type { User as FirebaseAuthUser } from 'firebase/auth'
+
+import type { FirestoreUser, FirestoreUserPersonalData } from '~/composables/services/useUsersService'
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
     authUserData: undefined as FirebaseAuthUser | undefined,
-    firestoreUserData: undefined as Awaited<ReturnType<ReturnType<typeof useUsersService>['get']>> | undefined,
+    firestoreUserData: undefined as FirestoreUser | undefined,
+    firestoreUserPrivateData: undefined as FirestoreUserPersonalData | undefined,
   }),
 
   getters: {
     isAuthenticated (state) {
       return !!state.firestoreUserData && !!state.authUserData
+    },
+
+    userDisplayNameStr (state) {
+      return state.firestoreUserData?.displayName ?? ''
     },
   },
 
@@ -20,6 +26,10 @@ export const useAccountStore = defineStore('account', {
 
     setFirestoreUserData (value: typeof this.firestoreUserData) {
       this.firestoreUserData = value
+    },
+
+    setFirestoreUserPrivateData (value: typeof this.firestoreUserPrivateData) {
+      this.firestoreUserPrivateData = value
     },
   },
 })

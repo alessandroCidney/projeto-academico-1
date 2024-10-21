@@ -18,16 +18,31 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       console.log('authUser', authUser)
 
       if (authUser) {
-        const userData = await usersService.get(authUser.uid)
+        let userData = await usersService.get(authUser.uid)
+
+        if (authUser.photoURL !== userData.providerPhotoUrl) {
+          userData = {
+            ...userData,
+            providerPhotoUrl: authUser.photoURL ?? undefined,
+          }
+
+          await usersService.update(authUser.uid, userData)
+        }
+
+        const userPrivateData = await usersService
+          .useUserPrivateDataService(authUser.uid)
+          .getPersonalData()
 
         accountStore.setAuthUserData(authUser)
         accountStore.setFirestoreUserData(userData)
+        accountStore.setFirestoreUserPrivateData(userPrivateData)
       }
     } catch (err) {
       console.error('Auth plugin error', err)
 
       accountStore.setAuthUserData(undefined)
       accountStore.setFirestoreUserData(undefined)
+      accountStore.setFirestoreUserPrivateData(undefined)
     } finally {
       console.log('end plugin')
       mainStore.setLoadingAuthPlugin(false)
