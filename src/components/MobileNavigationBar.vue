@@ -7,7 +7,7 @@
       stacked
     >
       <v-tab
-        v-for="tab in tabs"
+        v-for="tab in mainRoutes"
         :key="tab.route"
         :value="tab.route"
         class="normalLetterSpacing"
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { mainRoutes } from '~/data/routes'
 
 const route = useRoute()
 
@@ -36,29 +36,6 @@ const currentRoute = computed({
     await navigateTo({ path: newPath })
   },
 })
-
-const tabs = ref([
-  {
-    route: '/news',
-    icon: 'mdi-home',
-    title: 'Início',
-  },
-  {
-    route: '/articles',
-    icon: 'mdi-text-box',
-    title: 'Artigos',
-  },
-  {
-    route: '/notifications',
-    icon: 'mdi-bell',
-    title: 'Notificações',
-  },
-  {
-    route: '/account',
-    icon: 'mdi-account-circle',
-    title: 'Conta',
-  },
-])
 </script>
 
 <style lang="scss" scoped>

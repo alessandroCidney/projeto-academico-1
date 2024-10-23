@@ -52,7 +52,7 @@
     </div>
 
     <div class="mb-5">
-      <v-img
+      <image-with-loader
         :src="articleData.imageUrl"
         class="rounded-lg"
         height="200px"
@@ -124,6 +124,8 @@
 import CommentsList from './ArticleCommentsList/index.vue'
 
 import type { useArticlesService } from '~/composables/services/useArticlesService'
+
+import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 
 import { useAccountStore } from '~/store/account'
 

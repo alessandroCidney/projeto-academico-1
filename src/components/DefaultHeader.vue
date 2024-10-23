@@ -12,6 +12,7 @@
 
     <template #append>
       <v-btn
+        v-if="accountStore.firestoreUserData?.role === 'Admin'"
         to="/admin/users"
         icon="mdi-star"
       />
@@ -22,3 +23,9 @@
     </template>
   </v-app-bar>
 </template>
+
+<script setup lang="ts">
+import { useAccountStore } from '~/store/account'
+
+const accountStore = useAccountStore()
+</script>

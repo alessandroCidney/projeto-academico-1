@@ -12,7 +12,7 @@
       >
         <div class="d-flex align-center justify-start">
           <div>
-            <v-img
+            <image-with-loader
               :src="item.imageUrl"
               height="110px"
               width="110px"
@@ -64,6 +64,8 @@
 import ArticlesListPage from '~/components/articles/ArticlesListPage.vue'
 
 import { useArticlesService } from '~/composables/services/useArticlesService'
+
+import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 
 const articlesService = useArticlesService()
 </script>

@@ -48,7 +48,7 @@
             class="mb-7"
             @click="navigateTo({ path: `${$route.path}/${item._id}` })"
           >
-            <v-img
+            <image-with-loader
               :src="item.imageUrl"
               height="200px"
               width="100%"
@@ -77,6 +77,8 @@
 
 <script setup lang="ts">
 import type { useArticlesService } from '~/composables/services/useArticlesService'
+
+import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 
 const props = defineProps({
   service: { type: Object as PropType<ReturnType<typeof useArticlesService>>, required: true },
