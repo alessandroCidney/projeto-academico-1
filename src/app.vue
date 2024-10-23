@@ -4,7 +4,7 @@
     class="d-flex align-center justify-center appLoadingContainer"
   >
     <v-progress-circular
-      width="7"
+      width="8"
       size="150"
       color="primary"
       indeterminate
@@ -37,12 +37,12 @@ onMounted(async () => {
 
   console.log('end waiting app.vue')
 
-  if (route.name === 'login' && accountStore.isAuthenticated) {
+  if (route.meta.isALoginRoute && accountStore.isAuthenticated) {
     console.log('navigate to index')
-    await router.push('/news')
+    await router.push('/')
   }
 
-  if (route.name !== 'login' && !accountStore.isAuthenticated) {
+  if (!route.meta.isALoginRoute && !accountStore.isAuthenticated) {
     console.log('navigate to login')
     await router.push('/login')
   }

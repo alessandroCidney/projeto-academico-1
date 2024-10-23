@@ -7,5 +7,6 @@ import Page from '@/app/login/index.vue'
 
 definePageMeta({
   layout: 'clear',
+  isALoginRoute: true,
 })
 </script>

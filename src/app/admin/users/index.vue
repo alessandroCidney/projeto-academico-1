@@ -5,7 +5,7 @@
         icon="mdi-chevron-left"
         variant="tonal"
         class="mr-5"
-        @click="$router.push('/articles')"
+        @click="$router.push('/')"
       />
 
       <h1 class="text-h5 font-weight-bold">
@@ -27,7 +27,7 @@
             <template #prepend>
               <v-avatar>
                 <v-img
-                  :src="userData.imageUrl"
+                  :src="''"
                 />
               </v-avatar>
             </template>
@@ -37,7 +37,7 @@
             </template>
 
             <template #subtitle>
-              {{ userData._id }}
+              {{ userData.position }}
             </template>
 
             <template #append>

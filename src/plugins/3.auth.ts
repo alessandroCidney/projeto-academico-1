@@ -18,16 +18,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       console.log('authUser', authUser)
 
       if (authUser) {
-        let userData = await usersService.get(authUser.uid)
-
-        if (authUser.photoURL !== userData.providerPhotoUrl) {
-          userData = {
-            ...userData,
-            providerPhotoUrl: authUser.photoURL ?? undefined,
-          }
-
-          await usersService.update(authUser.uid, userData)
-        }
+        const userData = await usersService.get(authUser.uid)
 
         const userPrivateData = await usersService
           .useUserPrivateDataService(authUser.uid)

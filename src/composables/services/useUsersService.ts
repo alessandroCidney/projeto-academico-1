@@ -1,16 +1,20 @@
 import { useFirestoreCrud } from './useFirestoreCrud'
 
-export interface FirestoreUser {
-  _id: string
-  displayName: string
-  createdAt: string
-  providerPhotoUrl?: string
-  position: string
-  role: 'Viewer' | 'Admin'
+export class FirestoreUser {
+  _id = ''
+  displayName = ''
+  createdAt = ''
+  updatedAt: string | null = null
+  position = ''
+  role: 'Viewer' | 'Admin' = 'Viewer'
+  manuallyVerified = false
+  emailVerified = false
 }
 
-export interface FirestoreUserPersonalData {
-  email: string
+export class FirestoreUserPersonalData {
+  email = ''
+  createdAt = ''
+  updatedAt: string | null = null
 }
 
 export function useUsersService () {
@@ -22,6 +26,14 @@ export function useUsersService () {
     return {
       getPersonalData () {
         return userPrivateDataFirestoreCrud.get('personal-data')
+      },
+
+      createPersonalData (payload: FirestoreUserPersonalData) {
+        return userPrivateDataFirestoreCrud.create('personal-data', payload)
+      },
+
+      updatePersonalData (payload: FirestoreUserPersonalData) {
+        return userPrivateDataFirestoreCrud.update('personal-data', payload)
       },
     }
   }

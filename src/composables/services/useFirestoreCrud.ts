@@ -30,6 +30,14 @@ export function useFirestoreCrud<BaseObject extends object> (path: string) {
       }
     },
 
+    async checkIfExists (itemId: string) {
+      const docRef = doc(nuxtApp.$firebaseFirestore, `${path}/${itemId}`)
+
+      const docSnap = await getDoc(docRef)
+
+      return docSnap.exists()
+    },
+
     async create (itemId: string, payload: BaseObject) {
       if (!itemId) {
         throw new Error('Invalid ID')
