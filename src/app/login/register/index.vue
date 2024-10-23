@@ -90,18 +90,21 @@
     <v-form>
       <div class="mb-5">
         <v-text-field
+          v-model="emailRegisterFormData.email"
           label="E-mail"
           placeholder="Digite seu e-mail"
           variant="outlined"
         />
 
-        <v-text-field
+        <password-text-field
+          v-model="emailRegisterFormData.password"
           label="Senha"
           placeholder="Digite a senha desejada"
           variant="outlined"
         />
 
-        <v-text-field
+        <password-text-field
+          v-model="emailRegisterFormData.passwordConfirmation"
           label="Confirme a senha"
           placeholder="Digite a senha novamente"
           variant="outlined"
@@ -126,6 +129,7 @@
           color="primary"
           variant="flat"
           size="large"
+          @click="handleRegisterWithEmailAndPassword()"
         >
           Continuar
         </v-btn>
@@ -135,10 +139,12 @@
 </template>
 
 <script setup lang="ts">
-import { GoogleAuthProvider, signInWithPopup, signOut, type UserCredential } from 'firebase/auth'
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, type UserCredential } from 'firebase/auth'
 
 import LoginPageContainer from '~/components/login/LoginPageContainer.vue'
 import { FirestoreUser, FirestoreUserPersonalData, useUsersService } from '~/composables/services/useUsersService'
+
+import PasswordTextField from '~/components/commons/PasswordTextField.vue'
 
 const nuxtApp = useNuxtApp()
 
@@ -148,10 +154,27 @@ const loadingRegister = ref(false)
 
 const authenticatedUserCredential = ref<UserCredential>()
 
+const emailRegisterFormData = ref({
+  email: '',
+  password: '',
+  passwordConfirmation: '',
+})
+
 const userCreationPayload = ref({
   public: new FirestoreUser(),
   private: new FirestoreUserPersonalData(),
 })
+
+async function handleValidateAuthenticatedUser (userCredential: UserCredential) {
+  const userAlreadyExists = await usersService.checkIfExists(userCredential.user.uid)
+
+  if (userAlreadyExists) {
+    await signOut(nuxtApp.$firebaseAuth)
+    throw new Error('User already exists')
+  } else {
+    authenticatedUserCredential.value = userCredential
+  }
+}
 
 async function handleRegisterWithGoogle () {
   try {
@@ -161,14 +184,25 @@ async function handleRegisterWithGoogle () {
 
     const userCredential = await signInWithPopup(nuxtApp.$firebaseAuth, googleProvider)
 
-    const userAlreadyExists = await usersService.checkIfExists(userCredential.user.uid)
+    await handleValidateAuthenticatedUser(userCredential)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loadingRegister.value = false
+  }
+}
 
-    if (userAlreadyExists) {
-      await signOut(nuxtApp.$firebaseAuth)
-      throw new Error('User already exists')
-    } else {
-      authenticatedUserCredential.value = userCredential
-    }
+async function handleRegisterWithEmailAndPassword () {
+  try {
+    loadingRegister.value = true
+
+    const userCredential = await createUserWithEmailAndPassword(
+      nuxtApp.$firebaseAuth,
+      emailRegisterFormData.value.email,
+      emailRegisterFormData.value.password,
+    )
+
+    await handleValidateAuthenticatedUser(userCredential)
   } catch (err) {
     console.error(err)
   } finally {
