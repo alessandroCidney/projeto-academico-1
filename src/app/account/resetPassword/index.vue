@@ -1,62 +1,173 @@
 <template>
-  <div
-    class="resetPasswordPage py-10 px-5"
-  >
-    <div class="d-flex align-center justify-space-between mb-5">
-      <div class="d-flex align-center justify-start">
+  <login-page-container>
+    <h1 class="text-h5 font-weight-bold mb-5">
+      Redefinição de senha
+    </h1>
+
+    <template v-if="confirmEmailIsFilled">
+      <div class="mb-16">
+        <div class="mb-5">
+          Informe seu email e sua senha anterior para continuar:
+        </div>
+
+        <div>
+          <password-text-field
+            v-model="resetPasswordFormData.password"
+            label="Senha"
+            placeholder="Digite a senha desejada"
+            variant="outlined"
+          />
+        </div>
+
         <v-btn
-          icon="mdi-chevron-left"
-          variant="tonal"
-          class="mr-5"
-          @click="$router.push('/account')"
-        />
-
-        <h1 class="text-h5 font-weight-bold  font-weight-bold">
-          Redefinição de senha
-        </h1>
+          class="normalLetterSpacing text-white"
+          color="primary"
+          variant="flat"
+          size="large"
+          block
+        >
+          Continuar
+        </v-btn>
       </div>
-    </div>
 
-    <div class="mb-5 px-2">
       <div class="mb-5">
-        Informe a senha anterior para continuar ou solicite um código de acesso via e-mail:
+        <div class="font-weight-bold mb-5">
+          Não lembra da sua senha anterior?
+        </div>
+
+        <p class="mb-5">
+          Receba um link de redefinição de senha por e-mail clicando no botão abaixo.
+        </p>
+
+        <v-btn
+          :loading="loadingSendPasswordResetEmail"
+          class="normalLetterSpacing"
+          color="grey-darken-3"
+          variant="flat"
+          size="large"
+          block
+          @click="handleSendPasswordResetEmail"
+        >
+          Receber link de redefinição por e-mail
+        </v-btn>
       </div>
 
-      <div>
-        <v-text-field
-          variant="outlined"
-          label="Senha anterior"
-        />
-      </div>
-    </div>
-
-    <div class="mb-2">
       <v-btn
-        class="normalLetterSpacing text-white"
-        color="primary"
+        class="normalLetterSpacing mr-2"
+        color="grey-lighten-4"
         variant="flat"
         size="large"
         block
+        @click="handleCancelAfterConfirmEmail()"
       >
-        Continuar
-      </v-btn>
-    </div>
+        <v-icon
+          v-if="!accountStore.isAuthenticated"
+          start
+        >
+          mdi-arrow-left
+        </v-icon>
 
-    <div>
-      <v-btn
-        class="normalLetterSpacing"
-        color="grey-darken-3"
-        variant="flat"
-        size="large"
-        block
-      >
-        Receber link de redefinição
+        {{ accountStore.isAuthenticated ? 'Cancelar' : 'Voltar' }}
       </v-btn>
-    </div>
-  </div>
+    </template>
+
+    <template v-else>
+      <v-form
+        @submit.prevent
+      >
+        <div class="mb-5">
+          Informe seu email para iniciar o processo de redefinição:
+        </div>
+
+        <div>
+          <v-text-field
+            v-model="resetPasswordFormData.email"
+            label="E-mail"
+            placeholder="Digite seu e-mail"
+            variant="outlined"
+          />
+        </div>
+
+        <div class="d-flex align-center justify-center">
+          <v-btn
+            :style="{ width: 'calc(50% - 8px) !important' }"
+            to="/auth/login"
+            class="normalLetterSpacing mr-2"
+            color="grey-lighten-4"
+            variant="flat"
+            size="large"
+          >
+            Cancelar
+          </v-btn>
+
+          <v-btn
+            :style="{ width: '50% !important' }"
+            class="normalLetterSpacing"
+            color="primary"
+            variant="flat"
+            size="large"
+            @click="confirmEmailIsFilled = true"
+          >
+            Continuar
+          </v-btn>
+        </div>
+      </v-form>
+    </template>
+  </login-page-container>
 </template>
 
 <script setup lang="ts">
+import { sendPasswordResetEmail } from 'firebase/auth'
+
+import PasswordTextField from '~/components/commons/PasswordTextField.vue'
+import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
+
+import { useAccountStore } from '~/store/account'
+import { useSnackbarStore } from '~/store/snackbar'
+
+const nuxtApp = useNuxtApp()
+
+const accountStore = useAccountStore()
+const snackbarStore = useSnackbarStore()
+
+const loadingSendPasswordResetEmail = ref(false)
+
+const confirmEmailIsFilled = ref(!!accountStore.firestoreUserPrivateData?.email)
+
+const resetPasswordFormData = ref({
+  email: accountStore.firestoreUserPrivateData?.email ?? '',
+  password: '',
+  passwordConfirmation: '',
+})
+
+async function handleSendPasswordResetEmail () {
+  try {
+    loadingSendPasswordResetEmail.value = true
+
+    if (!resetPasswordFormData.value.email) {
+      throw new Error('Cannot found email')
+    }
+
+    await sendPasswordResetEmail(nuxtApp.$firebaseAuth, resetPasswordFormData.value.email)
+
+    snackbarStore.showSuccessSnackbar('E-mail enviado! Verifique sua caixa de entrada')
+
+    await navigateTo({ path: '/account' })
+  } catch (err) {
+    console.error(err)
+    snackbarStore.showErrorSnackbar('Ocorreu um erro! Por favor, tente novamente')
+  } finally {
+    loadingSendPasswordResetEmail.value = false
+  }
+}
+
+async function handleCancelAfterConfirmEmail () {
+  if (accountStore.firestoreUserPrivateData?.email) {
+    await navigateTo({ path: '/account' })
+  } else {
+    confirmEmailIsFilled.value = false
+  }
+}
 </script>
 
 <style lang="scss">

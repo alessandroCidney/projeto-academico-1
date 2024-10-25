@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import Page from '@/app/login/register/index.vue'
+import Page from '@/app/auth/action/index.vue'
 
 definePageMeta({
   layout: 'clear',

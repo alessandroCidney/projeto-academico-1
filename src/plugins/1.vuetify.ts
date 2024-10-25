@@ -13,6 +13,7 @@ export default defineNuxtPlugin((app) => {
         mainTheme: {
           colors: {
             primary: '#00E3C8',
+            success: '#16c45c',
             error: '#F24236',
           },
         },

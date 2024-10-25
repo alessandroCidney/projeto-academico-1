@@ -62,7 +62,6 @@
 
     <div>
       <v-btn
-        to="/login"
         class="normalLetterSpacing"
         prepend-icon="mdi-arrow-left"
         variant="flat"
@@ -88,6 +87,12 @@ const nuxtApp = useNuxtApp()
 
 async function handleSignOut () {
   await signOut(nuxtApp.$firebaseAuth)
+
+  accountStore.setAuthUserData(undefined)
+  accountStore.setFirestoreUserData(undefined)
+  accountStore.setFirestoreUserPrivateData(undefined)
+
+  await navigateTo({ path: '/auth/login' })
 }
 </script>
 

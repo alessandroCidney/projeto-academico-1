@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import DefaultHeader from '@/components/DefaultHeader.vue'
-import MobileNavigationBar from '@/components/MobileNavigationBar.vue'
+import DefaultHeader from '~/components/DefaultHeader.vue'
+import MobileNavigationBar from '~/components/MobileNavigationBar.vue'
 
 import { mainRoutes } from '~/data/routes'
 

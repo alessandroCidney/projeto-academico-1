@@ -39,7 +39,7 @@
     <ul>
       <li class="mb-2">
         <nuxt-link
-          to="/login/register"
+          to="/auth/login/register"
         >
           Não possui uma conta?
         </nuxt-link>
@@ -47,7 +47,7 @@
 
       <li class="mb-2">
         <nuxt-link
-          to="reset-password"
+          to="/account/reset-password"
         >
           Esqueceu sua senha?
         </nuxt-link>
@@ -71,7 +71,7 @@ import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 
 import { useUsersService } from '@/composables/services/useUsersService'
 
-import LoginPageContainer from '~/components/login/LoginPageContainer.vue'
+import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 
 import { useNuxtApp } from '#imports'
 

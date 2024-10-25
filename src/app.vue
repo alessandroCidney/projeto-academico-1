@@ -15,20 +15,23 @@
     v-else
   >
     <nuxt-page />
+
+    <app-snackbar />
   </nuxt-layout>
 </template>
 
 <script setup lang="ts">
+import { authMiddlewareCheck } from './middleware/auth.global'
+
+import AppSnackbar from '~/components/commons/AppSnackbar.vue'
+
 import { useMainStore } from '~/store'
-import { useAccountStore } from '~/store/account'
 
 import { waitFor } from '~/utils'
 
 const route = useRoute()
-const router = useRouter()
 
 const mainStore = useMainStore()
-const accountStore = useAccountStore()
 
 onMounted(async () => {
   console.log('start waiting app.vue', mainStore.loadingAuthPlugin)
@@ -37,15 +40,7 @@ onMounted(async () => {
 
   console.log('end waiting app.vue')
 
-  if (route.meta.isALoginRoute && accountStore.isAuthenticated) {
-    console.log('navigate to index')
-    await router.push('/')
-  }
-
-  if (!route.meta.isALoginRoute && !accountStore.isAuthenticated) {
-    console.log('navigate to login')
-    await router.push('/login')
-  }
+  await authMiddlewareCheck(route)
 })
 </script>
 

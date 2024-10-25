@@ -141,7 +141,7 @@
 <script setup lang="ts">
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, type UserCredential } from 'firebase/auth'
 
-import LoginPageContainer from '~/components/login/LoginPageContainer.vue'
+import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 import { FirestoreUser, FirestoreUserPersonalData, useUsersService } from '~/composables/services/useUsersService'
 
 import PasswordTextField from '~/components/commons/PasswordTextField.vue'
@@ -253,7 +253,7 @@ async function handleCancel () {
   } catch (err) {
     console.error(err)
   } finally {
-    await navigateTo({ path: '/login' })
+    await navigateTo({ path: '/auth/login' })
   }
 }
 </script>
