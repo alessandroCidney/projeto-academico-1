@@ -1,6 +1,10 @@
+import { ref as storageRef, uploadBytes } from 'firebase/storage'
+
 import { useFirestoreCrud } from './useFirestoreCrud'
 
 import { useAccountStore } from '~/store/account'
+
+import { fillItemImageUrl } from '~/utils/services'
 
 export class FirestoreUser {
   _id = ''
@@ -11,6 +15,9 @@ export class FirestoreUser {
   role: 'Viewer' | 'Admin' = 'Viewer'
   manuallyVerified = false
   emailVerified = false
+
+  imagePath = ''
+  imageUrl = ''
 }
 
 export class FirestoreUserPersonalData {
@@ -34,6 +41,8 @@ export class FirestoreUserNotification {
 
 export function useUsersService () {
   const accountStore = useAccountStore()
+
+  const nuxtApp = useNuxtApp()
 
   const firestoreCrud = useFirestoreCrud<FirestoreUser>('users')
 
@@ -76,6 +85,46 @@ export function useUsersService () {
       accountStore.updateCachedUser(userData)
 
       return userData
+    },
+
+    async list () {
+      const results = await firestoreCrud.list()
+
+      const formattedResults = await Promise.all(results.map(fillItemImageUrl))
+
+      return formattedResults
+    },
+
+    async get (itemId: string) {
+      const result = await firestoreCrud.get(itemId)
+
+      return fillItemImageUrl(result)
+    },
+
+    async updateProfilePhoto (itemId: string, imageFile: File) {
+      const thumbnailRef = storageRef(nuxtApp.$firebaseStorage, `users/${itemId}/profile-photo.${imageFile.name.split('.').pop()}`)
+
+      const snapshot = await uploadBytes(thumbnailRef, imageFile)
+
+      return snapshot.metadata.fullPath
+    },
+
+    async create (itemId: string, payload: FirestoreUser, imageFile?: File) {
+      if (imageFile) {
+        payload.imagePath = await this.updateProfilePhoto(itemId, imageFile)
+        await fillItemImageUrl(payload)
+      }
+
+      return await firestoreCrud.create(itemId, payload)
+    },
+
+    async update (itemId: string, payload: FirestoreUser, imageFile?: File) {
+      if (imageFile) {
+        payload.imagePath = await this.updateProfilePhoto(itemId, imageFile)
+        await fillItemImageUrl(payload)
+      }
+
+      return await firestoreCrud.update(itemId, payload)
     },
 
     useUserPrivateDataService,

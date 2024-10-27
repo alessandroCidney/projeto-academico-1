@@ -6,13 +6,9 @@
 
     <div class="d-flex align-center justify-space-start mb-5">
       <div class="mr-5">
-        <v-avatar
-          size="80"
-        >
-          <v-img
-            :src="accountStore.firestoreUserData?.providerPhotoUrl"
-          />
-        </v-avatar>
+        <user-avatar
+          :src="accountStore.firestoreUserData?.imageUrl"
+        />
       </div>
 
       <div>
@@ -78,6 +74,8 @@
 
 <script setup lang="ts">
 import { signOut } from 'firebase/auth'
+
+import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 import { useAccountStore } from '~/store/account'
 

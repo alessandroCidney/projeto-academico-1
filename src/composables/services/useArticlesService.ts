@@ -1,8 +1,10 @@
-import { getDownloadURL, ref as storageRef, uploadBytes } from 'firebase/storage'
+import { ref as storageRef, uploadBytes } from 'firebase/storage'
 
 import { useFirestoreCrud } from './useFirestoreCrud'
 
 import type { FirestoreComment, FirestoreLike, FirestoreArticle } from '~/types'
+
+import { fillItemImageUrl } from '~/utils/services'
 
 export function useArticlesService (basePath = 'articles') {
   const nuxtApp = useNuxtApp()
@@ -19,18 +21,6 @@ export function useArticlesService (basePath = 'articles') {
     const commentsFirestoreCrud = useFirestoreCrud<FirestoreComment>(`${basePath}/${itemId}/comments`)
 
     return commentsFirestoreCrud
-  }
-
-  async function fillItemImageUrl (item: FirestoreArticle) {
-    if (item.imagePath) {
-      const thumbnailRef = storageRef(nuxtApp.$firebaseStorage, item.imagePath)
-
-      const downloadUrl = await getDownloadURL(thumbnailRef)
-
-      item.imageUrl = downloadUrl
-    }
-
-    return item
   }
 
   return {
@@ -53,23 +43,25 @@ export function useArticlesService (basePath = 'articles') {
       return fillItemImageUrl(result)
     },
 
-    async create (itemId: string, payload: FirestoreArticle, imageFile: File) {
+    async updateThumbnail (itemId: string, imageFile: File) {
       const thumbnailRef = storageRef(nuxtApp.$firebaseStorage, `${basePath}/${itemId}/thumbnail.${imageFile.name.split('.').pop()}`)
 
       const snapshot = await uploadBytes(thumbnailRef, imageFile)
 
-      payload.imagePath = snapshot.metadata.fullPath
+      return snapshot.metadata.fullPath
+    },
+
+    async create (itemId: string, payload: FirestoreArticle, imageFile?: File) {
+      if (imageFile) {
+        payload.imagePath = await this.updateThumbnail(itemId, imageFile)
+      }
 
       return await firestoreCrud.create(itemId, payload)
     },
 
     async update (itemId: string, payload: FirestoreArticle, imageFile?: File) {
       if (imageFile) {
-        const thumbnailRef = storageRef(nuxtApp.$firebaseStorage, `${basePath}/${itemId}/thumbnail.${imageFile.name.split('.').pop()}`)
-
-        const snapshot = await uploadBytes(thumbnailRef, imageFile)
-
-        payload.imagePath = snapshot.metadata.fullPath
+        payload.imagePath = await this.updateThumbnail(itemId, imageFile)
       }
 
       return await firestoreCrud.update(itemId, payload)

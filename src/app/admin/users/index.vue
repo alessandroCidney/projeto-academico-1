@@ -1,5 +1,20 @@
 <template>
-  <div class="pageContainer">
+  <div
+    v-if="loadingList"
+    class="fill-width fill-height d-flex align-center justify-center"
+  >
+    <v-progress-circular
+      size="150"
+      width="8"
+      color="primary"
+      indeterminate
+    />
+  </div>
+
+  <div
+    v-else
+    class="pageContainer"
+  >
     <div class="d-flex align-center mb-8">
       <v-btn
         icon="mdi-chevron-left"
@@ -20,7 +35,7 @@
 
       <v-list>
         <template
-          v-for="(userData, userIndex) in users"
+          v-for="(userData, userIndex) in usersList"
           :key="`user${userIndex}`"
         >
           <v-list-item class="py-3">
@@ -61,15 +76,32 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { useSnackbarStore } from '~/store/snackbar'
 
-import { useUsersService } from '@/composables/services/useUsersService'
+import { useUsersService } from '~/composables/services/useUsersService'
+
+const snackbarStore = useSnackbarStore()
 
 const usersService = useUsersService()
 
-const users = ref<Awaited<ReturnType<typeof usersService.list>>>([])
+const loadingList = ref(false)
 
-onMounted(async () => {
-  users.value = await usersService.list()
+const usersList = ref<Awaited<ReturnType<typeof usersService.list>>>([])
+
+onMounted(() => {
+  handleList()
 })
+
+async function handleList () {
+  try {
+    loadingList.value = true
+
+    usersList.value = await usersService.list()
+  } catch (err) {
+    console.error(err)
+    snackbarStore.showErrorSnackbar()
+  } finally {
+    loadingList.value = false
+  }
+}
 </script>

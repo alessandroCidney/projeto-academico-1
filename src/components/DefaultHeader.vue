@@ -6,7 +6,9 @@
     <template #prepend>
       <v-img
         src="@/assets/images/logos/white.svg"
+        class="cursor-pointer"
         width="150px"
+        @click="navigateTo({ path: '/' })"
       />
     </template>
 

@@ -19,6 +19,56 @@
         :key="`personalDataItem${personalDataItemIndex}`"
         :item="personalDataItem"
       />
+
+      <v-list-item>
+        <template #title>
+          Foto de perfil
+        </template>
+
+        <template #subtitle>
+          Clique na foto para alterar
+        </template>
+
+        <template #append>
+          <v-progress-circular
+            v-if="loadingUpdateProfilePhoto"
+            size="24"
+            width="2"
+            color="black"
+            class="ma-3"
+            indeterminate
+          />
+
+          <v-hover v-else>
+            <template #default="{ props: hoverProps, isHovering }">
+              <user-avatar
+                :key="`isLoading`"
+                :src="accountStore.firestoreUserData?.imageUrl"
+                :size="50"
+                class="cursor-pointer"
+                v-bind="hoverProps"
+                @click="selectFile((newFile) => handleUpdateProfilePhoto(newFile))"
+              >
+                <v-overlay
+                  :model-value="!!isHovering"
+                  :opacity="0.8"
+                  class="d-flex align-center justify-center"
+                  contained
+                  z-index="1"
+                >
+                  <v-icon
+                    color="white"
+                  >
+                    mdi-upload
+                  </v-icon>
+                </v-overlay>
+              </user-avatar>
+            </template>
+          </v-hover>
+        </template>
+      </v-list-item>
+
+      <v-divider class="my-3" />
     </v-list>
   </div>
 </template>
@@ -27,12 +77,20 @@
 import PersonalDataItem from './components/PersonalDataItem.vue'
 
 import { useAccountStore } from '~/store/account'
+import { useSnackbarStore } from '~/store/snackbar'
+
+import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 import { useUsersService } from '~/composables/services/useUsersService'
 
+import { selectFile } from '~/utils'
+
 const accountStore = useAccountStore()
+const snackbarStore = useSnackbarStore()
 
 const usersService = useUsersService()
+
+const loadingUpdateProfilePhoto = ref(false)
 
 const items = computed(() => [
   {
@@ -70,6 +128,33 @@ async function updateDisplayName (newValue: string) {
     }
   } catch (err) {
     console.error(err)
+  }
+}
+
+async function handleUpdateProfilePhoto (file: File) {
+  try {
+    console.log('updating user profile photo')
+
+    if (!accountStore.authUserData || !accountStore.firestoreUserData) {
+      throw new Error('Unauthenticated')
+    }
+
+    loadingUpdateProfilePhoto.value = true
+
+    const updatedUser = await usersService.update(
+      accountStore.authUserData.uid,
+      accountStore.firestoreUserData,
+      file,
+    )
+
+    console.log('update end')
+
+    accountStore.setFirestoreUserData(updatedUser)
+  } catch (err) {
+    console.error(err)
+    snackbarStore.showErrorSnackbar()
+  } finally {
+    loadingUpdateProfilePhoto.value = false
   }
 }
 </script>

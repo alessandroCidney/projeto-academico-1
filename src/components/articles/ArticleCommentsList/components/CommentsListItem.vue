@@ -3,13 +3,10 @@
     class="mb-10"
   >
     <template #prepend>
-      <v-avatar
-        color="grey-darken-4"
-      >
-        <v-icon>
-          mdi-account
-        </v-icon>
-      </v-avatar>
+      <user-avatar
+        :src="comment.removed ? undefined : accountStore.cachedUsers[comment.authorId].imageUrl"
+        :size="50"
+      />
     </template>
 
     <v-list-item-subtitle>
@@ -49,6 +46,8 @@
 </template>
 
 <script setup lang="ts">
+import UserAvatar from '~/components/commons/UserAvatar.vue'
+
 import { useAccountStore } from '~/store/account'
 
 import type { FirestoreComment } from '~/types'

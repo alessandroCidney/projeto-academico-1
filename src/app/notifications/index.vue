@@ -1,5 +1,20 @@
 <template>
-  <div class="pageContainer">
+  <div
+    v-if="loadingList"
+    class="fill-width fill-height d-flex align-center justify-center"
+  >
+    <v-progress-circular
+      size="150"
+      width="8"
+      color="primary"
+      indeterminate
+    />
+  </div>
+
+  <div
+    v-else
+    class="pageContainer"
+  >
     <h1 class="text-h5 font-weight-bold">
       Notificações
     </h1>
@@ -21,7 +36,7 @@
           </template>
 
           <v-list-item-title>
-            {{ notificationData.authorId }}
+            {{ accountStore.cachedUsers[notificationData.authorId].displayName }}
 
             {{ actionDetails[notificationData.action].text }}
             {{ actionDetails[notificationData.action].target[notificationData.target] }}
@@ -51,7 +66,7 @@ const usersService = useUsersService()
 
 const notificationsList = ref<FirestoreUserNotification[]>([])
 
-const loadingNotifications = ref(false)
+const loadingList = ref(false)
 
 const actionDetails = {
   like: {
@@ -80,16 +95,20 @@ async function handleList () {
       throw new Error('Unauthenticated')
     }
 
-    loadingNotifications.value = true
+    loadingList.value = true
 
     notificationsList.value = await usersService
       .useNotificationsService(accountStore.authUserData.uid)
       .list()
+
+    for (const notificationData of notificationsList.value) {
+      await usersService.getUserAndSaveToStoreCache(notificationData.authorId)
+    }
   } catch (err) {
     console.error(err)
     snackbarStore.showErrorSnackbar()
   } finally {
-    loadingNotifications.value = false
+    loadingList.value = false
   }
 }
 </script>
