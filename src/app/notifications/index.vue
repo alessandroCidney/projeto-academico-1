@@ -15,7 +15,7 @@
     v-else
     class="pageContainer"
   >
-    <h1 class="text-h5 font-weight-bold">
+    <h1 class="font-weight-bold">
       Notificações
     </h1>
 
@@ -28,11 +28,10 @@
           class="mb-5"
         >
           <template #prepend>
-            <v-avatar>
-              <v-img
-                :src="''"
-              />
-            </v-avatar>
+            <user-avatar
+              :src="accountStore.cachedUsers[notificationData.authorId].imageUrl"
+              :size="50"
+            />
           </template>
 
           <v-list-item-title>
@@ -58,6 +57,8 @@ import { useAccountStore } from '~/store/account'
 import { useSnackbarStore } from '~/store/snackbar'
 
 import { type FirestoreUserNotification, useUsersService } from '~/composables/services/useUsersService'
+
+import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 const accountStore = useAccountStore()
 const snackbarStore = useSnackbarStore()

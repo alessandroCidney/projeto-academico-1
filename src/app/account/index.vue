@@ -1,6 +1,6 @@
 <template>
-  <div class="accountPage pa-10">
-    <h1 class="text-h5 font-weight-bold mb-10">
+  <div class="pageContainer accountPage pa-10">
+    <h1 class="mb-10">
       Minha conta
     </h1>
 

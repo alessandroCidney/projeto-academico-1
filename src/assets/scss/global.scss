@@ -32,8 +32,14 @@ a {
 .pageContainer {
   padding: 40px 30px 120px 30px;
 
+  max-width: 900px;
+  margin: 0 auto;
+
   > h1 {
+    padding-bottom: 20px;
     margin-bottom: 40px;
+
+    border-bottom: 1px solid #ddd;
   }
 
   .newItemFab {

@@ -15,7 +15,7 @@
     v-else
     class="pageContainer"
   >
-    <h1 class="text-h5 font-weight-bold">
+    <h1>
       {{ title }}
     </h1>
 

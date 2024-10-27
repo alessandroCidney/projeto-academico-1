@@ -6,15 +6,21 @@
       <slot />
     </v-main>
 
-    <mobile-navigation-bar v-if="currentRouteIsInMainRoutes" />
+    <mobile-navigation-bar
+      v-if="currentRouteIsInMainRoutes && mobile"
+    />
   </v-app>
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
+
 import DefaultHeader from '~/components/DefaultHeader.vue'
 import MobileNavigationBar from '~/components/MobileNavigationBar.vue'
 
 import { mainRoutes } from '~/data/routes'
+
+const { mobile } = useDisplay()
 
 const route = useRoute()
 

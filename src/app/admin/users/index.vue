@@ -40,11 +40,10 @@
         >
           <v-list-item class="py-3">
             <template #prepend>
-              <v-avatar>
-                <v-img
-                  :src="''"
-                />
-              </v-avatar>
+              <user-avatar
+                :src="userData.imageUrl"
+                :size="50"
+              />
             </template>
 
             <template #title>
@@ -79,6 +78,8 @@
 import { useSnackbarStore } from '~/store/snackbar'
 
 import { useUsersService } from '~/composables/services/useUsersService'
+
+import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 const snackbarStore = useSnackbarStore()
 

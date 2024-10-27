@@ -1,25 +1,48 @@
 <template>
-  <div class="loginPage">
+  <div
+    :class="{
+      'loginPage': true,
+      'd-flex align-center justify-space-between': !mobile,
+    }"
+  >
     <v-img
       src="@/assets/images/photos/team.jpg"
-      width="100%"
-      height="30vh"
+      :height="mobile ? '30vh' : '100vh'"
+      :width="mobile ? '100%' : '50%'"
       cover
     >
       <div class="teamImageOverlay fillWidth fillHeight" />
     </v-img>
 
-    <div class="pa-10">
-      <v-img
-        src="@/assets/images/logos/default.svg"
-        width="230px"
-        class="mb-10"
-      />
+    <div
+      :style="{
+        width: mobile ? '100%' : '50%',
+      }"
+      class="pa-10"
+    >
+      <div
+        :style="{
+          margin: 'auto',
+          maxWidth: mobile ? 'none' : '500px',
+        }"
+      >
+        <v-img
+          src="@/assets/images/logos/default.svg"
+          width="230px"
+          class="mb-10"
+        />
 
-      <slot />
+        <slot />
+      </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useDisplay } from 'vuetify'
+
+const { mobile } = useDisplay()
+</script>
 
 <style lang="scss" scoped>
 .teamImageOverlay {

@@ -7,6 +7,10 @@ export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
     ssr: false,
 
+    display: {
+      mobileBreakpoint: 'md',
+    },
+
     theme: {
       defaultTheme: 'mainTheme',
       themes: {
