@@ -5,7 +5,7 @@ interface ItemWithImage {
   imageUrl: string
 }
 
-export async function fillItemImageUrl (item: ItemWithImage) {
+export async function fillItemImageUrl<T extends ItemWithImage> (item: T) {
   if (item.imagePath) {
     const nuxtApp = useNuxtApp()
 

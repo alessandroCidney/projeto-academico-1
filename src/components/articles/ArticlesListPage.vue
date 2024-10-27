@@ -36,7 +36,7 @@
 
     <div>
       <template
-        v-for="item in items"
+        v-for="item in allowedItems"
         :key="item._id"
       >
         <slot
@@ -76,7 +76,10 @@
 </template>
 
 <script setup lang="ts">
+import { useUsersService } from '~/composables/services/useUsersService'
 import type { useArticlesService } from '~/composables/services/useArticlesService'
+
+import { useAccountStore } from '~/store/account'
 
 import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 
@@ -85,9 +88,20 @@ const props = defineProps({
   title: { type: String, required: true },
 })
 
+const accountStore = useAccountStore()
+
+const usersService = useUsersService()
+
 const loadingItems = ref(false)
 
 const items = ref<Awaited<ReturnType<typeof props.service.list>>>([])
+
+const allowedItems = computed(
+  () => items.value.filter(
+    itemData => accountStore.cachedUsers[itemData.authorId].manuallyVerified
+      || accountStore.authUserData?.uid === itemData.authorId,
+  ),
+)
 
 onMounted(() => {
   handleList()
@@ -98,6 +112,10 @@ async function handleList () {
     loadingItems.value = true
 
     items.value = await props.service.list()
+
+    for (const itemData of items.value) {
+      await usersService.getUserAndSaveToStoreCache(itemData.authorId)
+    }
   } catch (err) {
     console.error(err)
   } finally {
