@@ -116,6 +116,8 @@ async function handleResetPassword () {
     await confirmPasswordReset(nuxtApp.$firebaseAuth, props.actionCode, resetPasswordFormData.value.password)
 
     snackbarStore.showSuccessSnackbar('Senha atualizada com sucesso!')
+
+    await navigateTo({ path: '/' })
   } catch (err) {
     console.error(err)
 

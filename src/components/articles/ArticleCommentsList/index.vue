@@ -76,9 +76,8 @@
       class="py-10"
     >
       <comments-list-item
-        v-for="(comment, commentIndex) in commentsList"
-        :key="`comment${commentIndex}`"
-        :cached-users-data="cachedUsersData"
+        v-for="comment in commentsList"
+        :key="`comment${comment._id}`"
         :comment="comment"
         :remove="handleRemove"
       />
@@ -112,8 +111,6 @@ const loadingCreate = ref(false)
 const openCommentForm = ref(false)
 const newCommentContent = ref('')
 
-const cachedUsersData = ref<Record<string, Awaited<ReturnType<typeof usersService.get>>>>({})
-
 onMounted(() => {
   handleList()
 })
@@ -125,8 +122,8 @@ async function handleList () {
     commentsList.value = await props.list()
 
     for (const commentData of commentsList.value) {
-      if (!commentData.removed && !cachedUsersData.value[commentData.authorId]) {
-        cachedUsersData.value[commentData.authorId] = await usersService.get(commentData.authorId)
+      if (!commentData.removed) {
+        await usersService.getUserAndSaveToStoreCache(commentData.authorId)
       }
     }
   } catch (err) {

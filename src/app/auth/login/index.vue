@@ -39,7 +39,7 @@
     <ul>
       <li class="mb-2">
         <nuxt-link
-          to="/auth/login/register"
+          to="/auth/register"
         >
           Não possui uma conta?
         </nuxt-link>

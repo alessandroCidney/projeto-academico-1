@@ -3,6 +3,7 @@
     v-if="typeof route.params.newsId === 'string'"
     :article-id="route.params.newsId"
     :service="newsService"
+    :type="FirestoreUserNotificationTarget.news"
   />
 </template>
 
@@ -10,6 +11,8 @@
 import { useNewsService } from '@/composables/services/useNewsService'
 
 import ArticleContentPage from '~/components/articles/ArticleContentPage.vue'
+
+import { FirestoreUserNotificationTarget } from '~/composables/services/useUsersService'
 
 const route = useRoute()
 

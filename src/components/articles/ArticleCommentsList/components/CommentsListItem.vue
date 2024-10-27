@@ -17,8 +17,8 @@
         Comentário removido
       </span>
 
-      <span v-else-if="cachedUsersData[comment.authorId]">
-        {{ cachedUsersData[comment.authorId].displayName }}
+      <span v-else-if="accountStore.cachedUsers[comment.authorId]">
+        {{ accountStore.cachedUsers[comment.authorId].displayName }}
       </span>
 
       <span v-else>
@@ -51,8 +51,6 @@
 <script setup lang="ts">
 import { useAccountStore } from '~/store/account'
 
-import type { useUsersService } from '~/composables/services/useUsersService'
-
 import type { FirestoreComment } from '~/types'
 
 const accountStore = useAccountStore()
@@ -60,10 +58,6 @@ const accountStore = useAccountStore()
 const props = defineProps({
   comment: { type: Object as PropType<FirestoreComment>, required: true },
   remove: { type: Function as PropType<(commentId: string) => Promise<unknown>>, required: true },
-  cachedUsersData: {
-    type: Object as PropType<Record<string, Awaited<ReturnType<ReturnType<typeof useUsersService>['get']>>>>,
-    required: true,
-  },
 })
 
 const loadingRemove = ref(false)

@@ -121,9 +121,12 @@
 </template>
 
 <script setup lang="ts">
+import { v4 as uuidV4 } from 'uuid'
+
 import CommentsList from './ArticleCommentsList/index.vue'
 
 import type { useArticlesService } from '~/composables/services/useArticlesService'
+import { useUsersService, type FirestoreUserNotificationTarget } from '~/composables/services/useUsersService'
 
 import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 
@@ -134,9 +137,12 @@ const router = useRouter()
 const props = defineProps({
   service: { type: Object as PropType<ReturnType<typeof useArticlesService>>, required: true },
   articleId: { type: String, required: true },
+  type: { type: String as PropType<FirestoreUserNotificationTarget>, required: true },
 })
 
 const accountStore = useAccountStore()
+
+const usersService = useUsersService()
 
 const loadingGet = ref(false)
 const loadingRemove = ref(false)
@@ -194,8 +200,12 @@ async function toggleLike () {
   try {
     loadingToggleLike.value = true
 
-    if (!accountStore.authUserData?.uid) {
+    if (!accountStore.authUserData) {
       throw new Error('Unauthenticated')
+    }
+
+    if (!articleData.value) {
+      throw new Error('Not loaded')
     }
 
     if (alreadyLiked.value) {
@@ -204,6 +214,16 @@ async function toggleLike () {
       await props.service.likesService(props.articleId).create(accountStore.authUserData.uid, {
         authorId: accountStore.authUserData.uid,
         createdAt: new Date().toISOString(),
+      })
+
+      const newNotificationId = uuidV4()
+
+      await usersService.useNotificationsService(articleData.value.authorId).create(newNotificationId, {
+        _id: newNotificationId,
+        action: 'like',
+        authorId: accountStore.authUserData.uid,
+        createdAt: new Date().toISOString(),
+        target: props.type,
       })
     }
 

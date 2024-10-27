@@ -7,6 +7,8 @@ export const useAccountStore = defineStore('account', {
     authUserData: undefined as FirebaseAuthUser | undefined,
     firestoreUserData: undefined as FirestoreUser | undefined,
     firestoreUserPrivateData: undefined as FirestoreUserPersonalData | undefined,
+
+    cachedUsers: {} as Record<string, FirestoreUser>,
   }),
 
   getters: {
@@ -30,6 +32,13 @@ export const useAccountStore = defineStore('account', {
 
     setFirestoreUserPrivateData (value: typeof this.firestoreUserPrivateData) {
       this.firestoreUserPrivateData = value
+    },
+
+    updateCachedUser (value: FirestoreUser) {
+      this.cachedUsers = {
+        ...this.cachedUsers,
+        [value._id]: value,
+      }
     },
   },
 })

@@ -7,24 +7,40 @@
     <template v-if="confirmEmailIsFilled">
       <div class="mb-16">
         <div class="mb-5">
-          Informe seu email e sua senha anterior para continuar:
+          Preencha as informações para continuar:
         </div>
 
         <div>
           <password-text-field
             v-model="resetPasswordFormData.password"
-            label="Senha"
-            placeholder="Digite a senha desejada"
+            label="Senha anterior"
+            placeholder="Digite a sua senha anterior"
+            variant="outlined"
+          />
+
+          <password-text-field
+            v-model="resetPasswordFormData.newPassword"
+            label="Nova senha"
+            placeholder="Digite a nova senha desejada"
+            variant="outlined"
+          />
+
+          <password-text-field
+            v-model="resetPasswordFormData.newPasswordConfirmation"
+            label="Confirme a nova senha"
+            placeholder="Digite a nova senha novamente"
             variant="outlined"
           />
         </div>
 
         <v-btn
+          :loading="loadingReauthenticateAndUpdatePassword"
           class="normalLetterSpacing text-white"
           color="primary"
           variant="flat"
           size="large"
           block
+          @click="reauthenticateAndUpdatePassword"
         >
           Continuar
         </v-btn>
@@ -117,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { sendPasswordResetEmail } from 'firebase/auth'
+import { EmailAuthProvider, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword } from 'firebase/auth'
 
 import PasswordTextField from '~/components/commons/PasswordTextField.vue'
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
@@ -130,6 +146,7 @@ const nuxtApp = useNuxtApp()
 const accountStore = useAccountStore()
 const snackbarStore = useSnackbarStore()
 
+const loadingReauthenticateAndUpdatePassword = ref(false)
 const loadingSendPasswordResetEmail = ref(false)
 
 const confirmEmailIsFilled = ref(!!accountStore.firestoreUserPrivateData?.email)
@@ -137,8 +154,45 @@ const confirmEmailIsFilled = ref(!!accountStore.firestoreUserPrivateData?.email)
 const resetPasswordFormData = ref({
   email: accountStore.firestoreUserPrivateData?.email ?? '',
   password: '',
-  passwordConfirmation: '',
+  newPassword: '',
+  newPasswordConfirmation: '',
 })
+
+async function reauthenticateWithEmailAndPassword () {
+  if (!nuxtApp.$firebaseAuth.currentUser) {
+    throw new Error('Unauthenticated')
+  }
+
+  const credential = EmailAuthProvider.credential(resetPasswordFormData.value.email, resetPasswordFormData.value.password)
+
+  await reauthenticateWithCredential(nuxtApp.$firebaseAuth.currentUser, credential)
+}
+
+async function reauthenticateAndUpdatePassword () {
+  try {
+    loadingReauthenticateAndUpdatePassword.value = true
+
+    if (accountStore.isAuthenticated) {
+      await reauthenticateWithEmailAndPassword()
+    } else {
+      await signInWithEmailAndPassword(nuxtApp.$firebaseAuth, resetPasswordFormData.value.email, resetPasswordFormData.value.password)
+    }
+
+    if (!nuxtApp.$firebaseAuth.currentUser) {
+      throw new Error('Unauthenticated')
+    }
+
+    await updatePassword(nuxtApp.$firebaseAuth.currentUser, resetPasswordFormData.value.newPassword)
+
+    snackbarStore.showSuccessSnackbar('Senha redefinida com sucesso!')
+    await navigateTo({ path: '/' })
+  } catch (err) {
+    console.error(err)
+    snackbarStore.showErrorSnackbar()
+  } finally {
+    loadingReauthenticateAndUpdatePassword.value = false
+  }
+}
 
 async function handleSendPasswordResetEmail () {
   try {
@@ -152,10 +206,10 @@ async function handleSendPasswordResetEmail () {
 
     snackbarStore.showSuccessSnackbar('E-mail enviado! Verifique sua caixa de entrada')
 
-    await navigateTo({ path: '/account' })
+    await navigateTo({ path: '/' })
   } catch (err) {
     console.error(err)
-    snackbarStore.showErrorSnackbar('Ocorreu um erro! Por favor, tente novamente')
+    snackbarStore.showErrorSnackbar()
   } finally {
     loadingSendPasswordResetEmail.value = false
   }

@@ -6,8 +6,8 @@
 
     <v-list class="itemsList">
       <template
-        v-for="item in items"
-        :key="item._id"
+        v-for="(notificationData, notificationDataIndex) in notificationsList"
+        :key="`notificationData${notificationDataIndex}`"
       >
         <v-list-item
           class="mb-5"
@@ -15,19 +15,16 @@
           <template #prepend>
             <v-avatar>
               <v-img
-                :src="item.imageUrl"
+                :src="''"
               />
             </v-avatar>
           </template>
 
           <v-list-item-title>
-            <template v-if="item.likes.length === 1">
-              <span class="font-weight-bold">{{ item.likes[0] }}</span> curtiu seu artigo
-            </template>
+            {{ notificationData.authorId }}
 
-            <template v-else>
-              <span class="font-weight-bold">{{ item.likes[0] }}</span> e mais {{ item.likes.length - 1 }} curtiram seu artigo
-            </template>
+            {{ actionDetails[notificationData.action].text }}
+            {{ actionDetails[notificationData.action].target[notificationData.target] }}
           </v-list-item-title>
         </v-list-item>
 
@@ -42,14 +39,57 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-function generateFakeArray () {
-  return [1, 2, 3, 4, 5, 6, 7].map(index => ({
-    _id: `notificacao-${index}`,
-    likes: ['user1', 'user2', 'user3'],
-    imageUrl: 'https://cdn.pixabay.com/photo/2023/10/29/14/37/pumpkins-8350480_1280.jpg',
-    tags: ['Tag 01'],
-  }))
+import { useAccountStore } from '~/store/account'
+import { useSnackbarStore } from '~/store/snackbar'
+
+import { type FirestoreUserNotification, useUsersService } from '~/composables/services/useUsersService'
+
+const accountStore = useAccountStore()
+const snackbarStore = useSnackbarStore()
+
+const usersService = useUsersService()
+
+const notificationsList = ref<FirestoreUserNotification[]>([])
+
+const loadingNotifications = ref(false)
+
+const actionDetails = {
+  like: {
+    text: 'gostou',
+    target: {
+      news: 'da sua notícia',
+      article: 'do seu artigo',
+    },
+  },
+  comment: {
+    text: 'comentou',
+    target: {
+      news: 'na sua notícia',
+      article: 'no seu artigo',
+    },
+  },
 }
 
-const items = ref(generateFakeArray())
+onMounted(() => {
+  handleList()
+})
+
+async function handleList () {
+  try {
+    if (!accountStore.authUserData) {
+      throw new Error('Unauthenticated')
+    }
+
+    loadingNotifications.value = true
+
+    notificationsList.value = await usersService
+      .useNotificationsService(accountStore.authUserData.uid)
+      .list()
+  } catch (err) {
+    console.error(err)
+    snackbarStore.showErrorSnackbar()
+  } finally {
+    loadingNotifications.value = false
+  }
+}
 </script>
