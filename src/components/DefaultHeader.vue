@@ -20,6 +20,7 @@
       />
 
       <v-btn
+        to="/search"
         icon="mdi-magnify"
       />
     </template>

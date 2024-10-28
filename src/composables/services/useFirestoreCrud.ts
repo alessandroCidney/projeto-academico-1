@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, query, setDoc, updateDoc, where } from 'firebase/firestore'
 
 export function useFirestoreCrud<BaseObject extends object> (path: string) {
   const nuxtApp = useNuxtApp()
@@ -66,6 +66,23 @@ export function useFirestoreCrud<BaseObject extends object> (path: string) {
       const docRef = doc(nuxtApp.$firebaseFirestore, path, itemId)
 
       await deleteDoc(docRef)
+    },
+
+    async search (property: keyof BaseObject, searchStr: string) {
+      const collectionRef = collection(nuxtApp.$firebaseFirestore, path)
+
+      const queryRef = query(
+        collectionRef,
+        where(property as string, '>=', searchStr),
+        where(property as string, '<=', searchStr + '\uf8ff'),
+        limit(5),
+      )
+
+      const querySnapshot = await getDocs(queryRef)
+
+      return querySnapshot
+        .docs
+        .map(querySnapshotItem => ({ ...querySnapshotItem.data(), _id: querySnapshotItem.id })) as BaseObject[]
     },
   }
 }
