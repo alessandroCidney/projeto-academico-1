@@ -24,9 +24,9 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 
-import DefaultHeader from '~/components/DefaultHeader.vue'
-import MobileNavigationBar from '~/components/MobileNavigationBar.vue'
-import DesktopNavigationBar from '~/components/DesktopNavigationBar.vue'
+import DefaultHeader from '~/components/layouts/DefaultHeader.vue'
+import MobileNavigationBar from '~/components/layouts/MobileNavigationBar.vue'
+import DesktopNavigationBar from '~/components/layouts/DesktopNavigationBar.vue'
 
 import { mainRoutes } from '~/data/routes'
 

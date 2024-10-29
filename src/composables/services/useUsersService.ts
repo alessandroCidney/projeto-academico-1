@@ -13,6 +13,8 @@ export class FirestoreUser {
   updatedAt: string | null = null
   position = ''
   role: 'Viewer' | 'Admin' = 'Viewer'
+
+  blockAccess = false
   manuallyVerified = false
   emailVerified = false
 
@@ -61,6 +63,10 @@ export function useUsersService () {
       updatePersonalData (payload: FirestoreUserPersonalData) {
         return userPrivateDataFirestoreCrud.update('personal-data', payload)
       },
+
+      removePersonalData () {
+        return userPrivateDataFirestoreCrud.remove('personal-data')
+      },
     }
   }
 
@@ -75,11 +81,9 @@ export function useUsersService () {
 
     async getUserAndSaveToStoreCache (userId: string) {
       if (accountStore.cachedUsers[userId]) {
-        console.log('loading cached user', userId)
         return accountStore.cachedUsers[userId]
       }
 
-      console.log('saving user to cache', userId)
       const userData = await firestoreCrud.get(userId)
 
       accountStore.updateCachedUser(userData)
@@ -99,6 +103,14 @@ export function useUsersService () {
       const result = await firestoreCrud.get(itemId)
 
       return fillItemImageUrl(result)
+    },
+
+    async remove (itemId: string) {
+      const privateDataCrud = this.useUserPrivateDataService(itemId)
+
+      await privateDataCrud.removePersonalData()
+
+      return firestoreCrud.remove(itemId)
     },
 
     async updateProfilePhoto (itemId: string, imageFile: File) {

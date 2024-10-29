@@ -55,15 +55,32 @@
             </template>
 
             <template #append>
-              <v-btn
-                icon="mdi-pencil"
-                variant="text"
-              />
+              <user-form
+                v-model:users-list="usersList"
+                :initial-payload="userData"
+                is-update
+              >
+                <template #activator="{ props: activatorProps }">
+                  <v-btn
+                    icon="mdi-pencil"
+                    variant="text"
+                    v-bind="activatorProps"
+                  />
+                </template>
+              </user-form>
 
-              <v-btn
-                icon="mdi-delete"
-                variant="text"
-              />
+              <user-removal-form
+                v-model:users-list="usersList"
+                :user-data="userData"
+              >
+                <template #activator="{ props: activatorProps }">
+                  <v-btn
+                    icon="mdi-delete"
+                    variant="text"
+                    v-bind="activatorProps"
+                  />
+                </template>
+              </user-removal-form>
             </template>
           </v-list-item>
 
@@ -75,11 +92,14 @@
 </template>
 
 <script setup lang="ts">
+import UserForm from './component/UserForm.vue'
+import UserRemovalForm from './component/UserRemovalForm.vue'
+
+import UserAvatar from '~/components/commons/UserAvatar.vue'
+
 import { useSnackbarStore } from '~/store/snackbar'
 
 import { useUsersService } from '~/composables/services/useUsersService'
-
-import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 const snackbarStore = useSnackbarStore()
 

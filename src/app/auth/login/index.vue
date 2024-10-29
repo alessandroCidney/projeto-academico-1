@@ -3,6 +3,7 @@
     <v-form class="mb-10">
       <v-btn
         :loading="loadingLoginWithGoogle"
+        :disabled="loadingSignInWithEmailAndPassword"
         class="normalLetterSpacing mb-5"
         prepend-icon="mdi-google"
         variant="tonal"
@@ -15,22 +16,27 @@
       </v-btn>
 
       <v-text-field
+        v-model="emailLoginPayload.email"
         label="E-mail"
         placeholder="user@example.com"
         variant="outlined"
       />
 
       <v-text-field
+        v-model="emailLoginPayload.password"
         label="Senha"
         placeholder="Digite sua senha"
         variant="outlined"
       />
 
       <v-btn
+        :loading="loadingSignInWithEmailAndPassword"
+        :disabled="loadingLoginWithGoogle"
         color="primary"
         class="text-white normalLetterSpacing py-6"
         variant="flat"
         block
+        @click="handleSignInWithEmailAndPassword"
       >
         Entrar
       </v-btn>
@@ -67,19 +73,43 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
-
-import { useUsersService } from '@/composables/services/useUsersService'
+import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, type UserCredential } from 'firebase/auth'
 
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 
-import { useNuxtApp } from '#imports'
+import { useUsersService } from '~/composables/services/useUsersService'
+
+import { useSnackbarStore } from '~/store/snackbar'
 
 const nuxtApp = useNuxtApp()
 
-const loadingLoginWithGoogle = ref(false)
+const snackbarStore = useSnackbarStore()
 
-const usersService = await useUsersService()
+const loadingLoginWithGoogle = ref(false)
+const loadingSignInWithEmailAndPassword = ref(false)
+
+const usersService = useUsersService()
+
+const emailLoginPayload = ref({
+  email: '',
+  password: '',
+})
+
+async function handleValidateLogin (userCredential: UserCredential) {
+  try {
+    await usersService.get(userCredential.user.uid)
+
+    reloadNuxtApp()
+  } catch (err) {
+    console.error(err)
+
+    if (err instanceof Error && err.message === 'Not found') {
+      snackbarStore.showErrorSnackbar('Você não possui uma conta. Registre-se para começar')
+    } else {
+      snackbarStore.showErrorSnackbar()
+    }
+  }
+}
 
 async function handleLoginWithGoogle () {
   try {
@@ -89,13 +119,32 @@ async function handleLoginWithGoogle () {
 
     const userCredential = await signInWithPopup(nuxtApp.$firebaseAuth, googleAuthProvider)
 
-    await usersService.get(userCredential.user.uid)
-
-    reloadNuxtApp()
+    await handleValidateLogin(userCredential)
   } catch (err) {
-    console.error('handleLoginWithGoogle error', err)
+    console.error(err)
+    snackbarStore.showErrorSnackbar()
   } finally {
     loadingLoginWithGoogle.value = false
+  }
+}
+
+async function handleSignInWithEmailAndPassword () {
+  try {
+    loadingSignInWithEmailAndPassword.value = true
+
+    const userCredential = await signInWithEmailAndPassword(nuxtApp.$firebaseAuth, emailLoginPayload.value.email, emailLoginPayload.value.password)
+
+    await handleValidateLogin(userCredential)
+  } catch (err) {
+    console.error('handleLoginWithGoogle error', err)
+
+    if (err instanceof Error && err.message === 'Not found') {
+      snackbarStore.showErrorSnackbar('Você não possui uma conta. Registre-se para começar')
+    } else {
+      snackbarStore.showErrorSnackbar()
+    }
+  } finally {
+    loadingSignInWithEmailAndPassword.value = false
   }
 }
 </script>

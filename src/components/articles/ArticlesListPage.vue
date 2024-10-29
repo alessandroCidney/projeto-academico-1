@@ -105,7 +105,7 @@ const items = ref<Awaited<ReturnType<typeof props.service.list>>>([])
 
 const allowedItems = computed(
   () => items.value.filter(
-    itemData => accountStore.cachedUsers[itemData.authorId].manuallyVerified
+    itemData => accountStore.cachedUsers[itemData.authorId]?.manuallyVerified
       || accountStore.authUserData?.uid === itemData.authorId,
   ),
 )

@@ -19,6 +19,10 @@ export const useAccountStore = defineStore('account', {
     userDisplayNameStr (state) {
       return state.firestoreUserData?.displayName ?? ''
     },
+
+    userRole (state) {
+      return state.firestoreUserData?.role ?? ''
+    },
   },
 
   actions: {

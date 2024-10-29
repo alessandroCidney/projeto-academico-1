@@ -7,13 +7,19 @@ export function authMiddlewareCheck (route: MiddlewareRouteParam) {
   const accountStore = useAccountStore()
 
   if (route.meta.isALoginRoute && accountStore.isAuthenticated && !route.meta.noRedirect) {
-    console.log('navigate to index')
     return navigateTo({ path: '/' })
   }
 
   if (!route.meta.isALoginRoute && !accountStore.isAuthenticated) {
-    console.log('navigate to login')
     return navigateTo({ path: '/auth/login' })
+  }
+
+  if (accountStore.isAuthenticated && accountStore.firestoreUserData?.blockAccess) {
+    throw createError({ statusCode: 401, fatal: true })
+  }
+
+  if (route.meta.isAnAdminRoute && accountStore.userRole !== 'Admin') {
+    throw createError({ statusCode: 404, fatal: true })
   }
 }
 

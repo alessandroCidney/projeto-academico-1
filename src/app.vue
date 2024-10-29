@@ -34,11 +34,7 @@ const route = useRoute()
 const mainStore = useMainStore()
 
 onMounted(async () => {
-  console.log('start waiting app.vue', mainStore.loadingAuthPlugin)
-
   await waitFor(() => !mainStore.loadingAuthPlugin)
-
-  console.log('end waiting app.vue')
 
   await authMiddlewareCheck(route)
 })

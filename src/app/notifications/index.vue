@@ -29,13 +29,13 @@
         >
           <template #prepend>
             <user-avatar
-              :src="accountStore.cachedUsers[notificationData.authorId].imageUrl"
+              :src="accountStore.cachedUsers[notificationData.authorId]?.imageUrl"
               :size="50"
             />
           </template>
 
           <v-list-item-title>
-            {{ accountStore.cachedUsers[notificationData.authorId].displayName }}
+            {{ accountStore.cachedUsers[notificationData.authorId]?.displayName ?? 'Usuário removido' }}
 
             {{ actionDetails[notificationData.action].text }}
             {{ actionDetails[notificationData.action].target[notificationData.target] }}
@@ -107,7 +107,10 @@ async function handleList () {
     }
   } catch (err) {
     console.error(err)
-    snackbarStore.showErrorSnackbar()
+
+    if (err instanceof Error && err.message !== 'Not found') {
+      snackbarStore.showErrorSnackbar()
+    }
   } finally {
     loadingList.value = false
   }
