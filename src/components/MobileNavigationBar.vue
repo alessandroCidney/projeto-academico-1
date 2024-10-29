@@ -7,16 +7,16 @@
       stacked
     >
       <v-tab
-        v-for="tab in mainRoutes"
-        :key="tab.route"
-        :value="tab.route"
+        v-for="routeData in mainRoutes"
+        :key="routeData.route"
+        :value="routeData.route"
         class="normalLetterSpacing"
       >
         <v-icon class="mb-1">
-          {{ tab.icon }}
+          {{ routeData.icon }}
         </v-icon>
 
-        {{ tab.title }}
+        {{ routeData.title }}
       </v-tab>
     </v-tabs>
   </div>
@@ -40,7 +40,7 @@ const currentRoute = computed({
 
 <style lang="scss" scoped>
 .mobileNavigationBar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   height: 80px;
 }

@@ -21,7 +21,10 @@
 
     <v-fab
       :to="`${$route.path}/create`"
-      class="newItemFab"
+      :class="{
+        newItemFab: true,
+        mobile,
+      }"
       color="primary"
       size="large"
       icon
@@ -76,12 +79,16 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
+
 import { useUsersService } from '~/composables/services/useUsersService'
 import type { useArticlesService } from '~/composables/services/useArticlesService'
 
 import { useAccountStore } from '~/store/account'
 
 import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
+
+const { mobile } = useDisplay()
 
 const props = defineProps({
   service: { type: Object as PropType<ReturnType<typeof useArticlesService>>, required: true },

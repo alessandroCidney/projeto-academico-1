@@ -2,7 +2,16 @@
   <v-app>
     <default-header />
 
-    <v-main class="defaultLayoutMain">
+    <desktop-navigation-bar
+      v-if="!mobile"
+    />
+
+    <v-main
+      :class="{
+        defaultLayoutMain: true,
+        mobile,
+      }"
+    >
       <slot />
     </v-main>
 
@@ -17,6 +26,7 @@ import { useDisplay } from 'vuetify'
 
 import DefaultHeader from '~/components/DefaultHeader.vue'
 import MobileNavigationBar from '~/components/MobileNavigationBar.vue'
+import DesktopNavigationBar from '~/components/DesktopNavigationBar.vue'
 
 import { mainRoutes } from '~/data/routes'
 
@@ -31,6 +41,10 @@ const currentRouteIsInMainRoutes = computed(() => mainRoutes.value.map(mainRoute
 .defaultLayoutMain {
   overflow: auto !important;
 
-  --v-layout-bottom: 80px !important;
+  padding-right: 255px !important;
+
+  &.mobile {
+    padding-right: 0 !important;
+  }
 }
 </style>
