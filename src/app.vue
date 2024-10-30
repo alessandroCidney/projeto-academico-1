@@ -21,6 +21,8 @@
 </template>
 
 <script setup lang="ts">
+import { useTheme } from 'vuetify'
+
 import { authMiddlewareCheck } from './middleware/auth.global'
 
 import AppSnackbar from '~/components/commons/AppSnackbar.vue'
@@ -28,6 +30,8 @@ import AppSnackbar from '~/components/commons/AppSnackbar.vue'
 import { useMainStore } from '~/store'
 
 import { waitFor } from '~/utils'
+
+const theme = useTheme()
 
 const route = useRoute()
 
@@ -37,6 +41,8 @@ onMounted(async () => {
   await waitFor(() => !mainStore.loadingAuthPlugin)
 
   await authMiddlewareCheck(route)
+
+  theme.global.name.value = 'mainTheme'
 })
 </script>
 

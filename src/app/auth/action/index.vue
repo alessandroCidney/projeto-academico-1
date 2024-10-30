@@ -29,11 +29,17 @@
       v-if="validatedParams.mode === 'resetPassword'"
       :action-code="validatedParams.actionCode"
     />
+
+    <verify-email-area
+      v-else-if="validatedParams.mode === 'verifyEmail'"
+      :action-code="validatedParams.actionCode"
+    />
   </template>
 </template>
 
 <script setup lang="ts">
 import ResetPasswordArea from './components/ResetPasswordArea/index.vue'
+import VerifyEmailArea from './components/VerifyEmailArea/index.vue'
 
 import AppLoadingScreen from '~/components/commons/loading/AppLoadingScreen.vue'
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'

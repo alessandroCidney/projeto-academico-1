@@ -5,7 +5,10 @@
     </h1>
 
     <template v-if="confirmEmailIsFilled">
-      <div class="mb-16">
+      <div
+        v-if="accountStore.isAuthenticated && accountStore.userHasEmailAndPasswordLogin"
+        class="mb-16"
+      >
         <div class="mb-5">
           Preencha as informações para continuar:
         </div>

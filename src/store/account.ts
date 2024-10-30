@@ -23,6 +23,18 @@ export const useAccountStore = defineStore('account', {
     userRole (state) {
       return state.firestoreUserData?.role ?? ''
     },
+
+    emailIsVerified (state) {
+      return !!state.authUserData?.emailVerified
+    },
+
+    userHasGoogleLogin (state) {
+      return !!state.authUserData?.providerData.find(item => item.providerId === 'google.com')
+    },
+
+    userHasEmailAndPasswordLogin (state) {
+      return !!state.authUserData?.providerData.find(item => item.providerId === 'password')
+    },
   },
 
   actions: {

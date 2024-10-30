@@ -10,12 +10,16 @@ export function authMiddlewareCheck (route: MiddlewareRouteParam) {
     return navigateTo({ path: '/' })
   }
 
-  if (!route.meta.isALoginRoute && !accountStore.isAuthenticated) {
+  if (!route.meta.isALoginRoute && (!accountStore.isAuthenticated || accountStore.firestoreUserData?.blockAccess)) {
     return navigateTo({ path: '/auth/login' })
   }
 
-  if (accountStore.isAuthenticated && accountStore.firestoreUserData?.blockAccess) {
-    throw createError({ statusCode: 401, fatal: true })
+  if (accountStore.isAuthenticated && !accountStore.emailIsVerified && route.path !== '/account/verify-email') {
+    return navigateTo({ path: '/account/verify-email' })
+  }
+
+  if (accountStore.isAuthenticated && accountStore.emailIsVerified && route.path === '/account/verify-email') {
+    return navigateTo({ path: '/' })
   }
 
   if (route.meta.isAnAdminRoute && accountStore.userRole !== 'Admin') {

@@ -29,14 +29,20 @@
           @click="modelValue = false"
         />
 
-        <v-btn
+        <slot
           :loading="loadingSubmit"
-          class="normalLetterSpacing px-8"
-          variant="flat"
-          color="primary"
-          text="Continuar"
-          @click="handleSubmit"
-        />
+          :action="handleSubmit"
+          name="submitButton"
+        >
+          <v-btn
+            :loading="loadingSubmit"
+            class="normalLetterSpacing px-8"
+            variant="flat"
+            color="primary"
+            text="Continuar"
+            @click="handleSubmit"
+          />
+        </slot>
       </v-card-actions>
     </v-card>
   </v-dialog>

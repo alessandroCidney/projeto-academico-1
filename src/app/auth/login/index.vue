@@ -22,7 +22,7 @@
         variant="outlined"
       />
 
-      <v-text-field
+      <password-text-field
         v-model="emailLoginPayload.password"
         label="Senha"
         placeholder="Digite sua senha"
@@ -36,7 +36,7 @@
         class="text-white normalLetterSpacing py-6"
         variant="flat"
         block
-        @click="handleSignInWithEmailAndPassword"
+        @click="handleSignInWithEmailAndPassword(emailLoginPayload.email, emailLoginPayload.password)"
       >
         Entrar
       </v-btn>
@@ -73,78 +73,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, type UserCredential } from 'firebase/auth'
-
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
+import PasswordTextField from '~/components/commons/PasswordTextField.vue'
 
-import { useUsersService } from '~/composables/services/useUsersService'
-
-import { useSnackbarStore } from '~/store/snackbar'
-
-const nuxtApp = useNuxtApp()
-
-const snackbarStore = useSnackbarStore()
-
-const loadingLoginWithGoogle = ref(false)
-const loadingSignInWithEmailAndPassword = ref(false)
-
-const usersService = useUsersService()
+import { useLogin } from '~/composables/commons/useLogin'
 
 const emailLoginPayload = ref({
   email: '',
   password: '',
 })
 
-async function handleValidateLogin (userCredential: UserCredential) {
-  try {
-    await usersService.get(userCredential.user.uid)
+const {
+  handleLoginWithGoogle,
+  handleSignInWithEmailAndPassword,
 
-    reloadNuxtApp()
-  } catch (err) {
-    console.error(err)
-
-    if (err instanceof Error && err.message === 'Not found') {
-      snackbarStore.showErrorSnackbar('Você não possui uma conta. Registre-se para começar')
-    } else {
-      snackbarStore.showErrorSnackbar()
-    }
-  }
-}
-
-async function handleLoginWithGoogle () {
-  try {
-    loadingLoginWithGoogle.value = true
-
-    const googleAuthProvider = new GoogleAuthProvider()
-
-    const userCredential = await signInWithPopup(nuxtApp.$firebaseAuth, googleAuthProvider)
-
-    await handleValidateLogin(userCredential)
-  } catch (err) {
-    console.error(err)
-    snackbarStore.showErrorSnackbar()
-  } finally {
-    loadingLoginWithGoogle.value = false
-  }
-}
-
-async function handleSignInWithEmailAndPassword () {
-  try {
-    loadingSignInWithEmailAndPassword.value = true
-
-    const userCredential = await signInWithEmailAndPassword(nuxtApp.$firebaseAuth, emailLoginPayload.value.email, emailLoginPayload.value.password)
-
-    await handleValidateLogin(userCredential)
-  } catch (err) {
-    console.error('handleLoginWithGoogle error', err)
-
-    if (err instanceof Error && err.message === 'Not found') {
-      snackbarStore.showErrorSnackbar('Você não possui uma conta. Registre-se para começar')
-    } else {
-      snackbarStore.showErrorSnackbar()
-    }
-  } finally {
-    loadingSignInWithEmailAndPassword.value = false
-  }
-}
+  loadingLoginWithGoogle,
+  loadingSignInWithEmailAndPassword,
+} = useLogin()
 </script>

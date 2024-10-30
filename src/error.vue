@@ -10,7 +10,6 @@
       </p>
 
       <v-btn
-        v-if="error?.statusCode !== 401"
         to="/"
         class="normalLetterSpacing"
         prepend-icon="mdi-arrow-left"

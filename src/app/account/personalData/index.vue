@@ -70,16 +70,35 @@
 
       <v-divider class="my-3" />
     </v-list>
+
+    <remove-my-account-dialog
+      v-if="accountStore.firestoreUserData"
+      :user-data="accountStore.firestoreUserData"
+    >
+      <template #activator="{ props: activatorProps }">
+        <v-btn
+          color="error"
+          class="normalLetterSpacing"
+          variant="flat"
+          size="large"
+          block
+          v-bind="activatorProps"
+        >
+          Excluir minha conta
+        </v-btn>
+      </template>
+    </remove-my-account-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import PersonalDataItem from './components/PersonalDataItem.vue'
+import RemoveMyAccountDialog from './components/RemoveMyAccountDialog.vue'
+
+import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 import { useAccountStore } from '~/store/account'
 import { useSnackbarStore } from '~/store/snackbar'
-
-import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 import { useUsersService } from '~/composables/services/useUsersService'
 
@@ -133,8 +152,6 @@ async function updateDisplayName (newValue: string) {
 
 async function handleUpdateProfilePhoto (file: File) {
   try {
-    console.log('updating user profile photo')
-
     if (!accountStore.authUserData || !accountStore.firestoreUserData) {
       throw new Error('Unauthenticated')
     }
@@ -146,8 +163,6 @@ async function handleUpdateProfilePhoto (file: File) {
       accountStore.firestoreUserData,
       file,
     )
-
-    console.log('update end')
 
     accountStore.setFirestoreUserData(updatedUser)
   } catch (err) {
