@@ -1,0 +1,85 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function getAuthenticatedUserData () {
+    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+    }
+
+  	function authenticatedUserIsAdmin () {
+    	return getAuthenticatedUserData().role == 'Admin'
+    }
+
+  	function authenticatedUserIsRegistered () {
+    	return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+    }
+    
+    function isAuthenticated () {
+    	return request.auth != null && authenticatedUserIsRegistered()
+    }
+    
+    function youIsTheAuthor () {
+    	return resource.data.authorId == request.auth.uid
+    }
+    
+    function youWillBeTheAuthor () {
+    	return request.resource.data.authorId == request.auth.uid
+    }
+
+    match /users/{userId} {
+    	function hasSimpleAuthentication () {
+      	return request.auth != null && request.auth.uid == userId
+      }
+    
+    	allow read: if hasSimpleAuthentication() || isAuthenticated()
+      allow create: if hasSimpleAuthentication() && request.resource.data.role == 'Viewer'
+      allow update, delete: if isAuthenticated() && (request.auth.uid == userId || authenticatedUserIsAdmin())
+
+      match /private/{privateDataId} {
+        allow read, write: if isAuthenticated() && (request.auth.uid == userId || authenticatedUserIsAdmin())
+      }
+      
+      match /notifications/{notificationId} {
+        allow read: if isAuthenticated() && request.auth.uid == userId
+        allow create: if isAuthenticated() && youWillBeTheAuthor()
+        allow update, delete: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      }
+    }
+    
+    match /news/{newsId} {
+    	allow read: if isAuthenticated()
+    	allow create: if isAuthenticated() && youWillBeTheAuthor()
+      allow update, delete: if isAuthenticated() && resource.data.authorId == request.auth.uid
+      
+      match /likes/{likeId} {
+      	allow read, write: if isAuthenticated() && likeId == request.auth.uid
+      }
+
+      match /comments/{commentId} {
+        allow read: if isAuthenticated()
+        allow create: if isAuthenticated() && youWillBeTheAuthor()
+        allow update, delete: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      }
+    }
+    
+    match /articles/{articleId} {
+    	allow read: if isAuthenticated()
+    	allow create: if isAuthenticated() && youWillBeTheAuthor()
+      allow update, delete: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      
+      match /likes/{likeId} {
+      	allow read, write: if isAuthenticated() && likeId == request.auth.uid
+      }
+
+      match /comments/{commentId} {
+        allow read: if isAuthenticated()
+        allow create: if isAuthenticated() && youWillBeTheAuthor()
+        allow update, delete: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false
+    }
+  }
+}

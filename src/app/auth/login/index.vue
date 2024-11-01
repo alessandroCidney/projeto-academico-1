@@ -58,13 +58,13 @@
     <div class="mb-3 text-body-2">
       <div class="mb-3">
         <nuxt-link to="/auth/register">
-          Não possui uma conta?
+          Não possui uma conta? Criar nova conta
         </nuxt-link>
       </div>
 
       <div>
         <nuxt-link to="privacy-policy">
-          Privacidade
+          Políticas e termos
         </nuxt-link>
       </div>
     </div>

@@ -122,7 +122,7 @@
         />
       </div>
 
-      <div class="d-flex align-center justify-center ga-2">
+      <div class="d-flex align-center justify-center ga-2 mb-10">
         <v-btn
           class="normalLetterSpacing flex-fill"
           color="grey-lighten-4"
@@ -143,6 +143,24 @@
         >
           Continuar
         </v-btn>
+      </div>
+
+      <div class="mb-5 text-body-2">
+        <div class="mb-3">
+          <nuxt-link to="/auth/login">
+            Já possui uma conta? Entrar
+          </nuxt-link>
+        </div>
+      </div>
+
+      <div class="text-caption text-disabled text-center">
+        Ao se registrar na plataforma, você aceita nossas
+        <nuxt-link
+          to="privacy-policy"
+          class="text-decoration-underline"
+        >
+          Políticas e Termos
+        </nuxt-link>
       </div>
     </v-form>
   </login-page-container>
