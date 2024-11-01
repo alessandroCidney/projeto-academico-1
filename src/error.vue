@@ -1,5 +1,5 @@
 <template>
-  <div class="errorPageContainer fillWidth d-flex align-center justify-center">
+  <div class="errorPageContainer w-100 d-flex align-center justify-center">
     <div class="text-center">
       <h1 class="text-h1 font-weight-bold text-primary mb-5">
         {{ error?.statusCode }}

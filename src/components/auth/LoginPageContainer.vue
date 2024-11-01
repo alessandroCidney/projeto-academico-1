@@ -11,7 +11,7 @@
       :width="mobile ? '100%' : '50%'"
       cover
     >
-      <div class="teamImageOverlay fillWidth fillHeight" />
+      <div class="teamImageOverlay w-100 h-100" />
     </v-img>
 
     <div
@@ -23,6 +23,7 @@
       <div
         :style="{
           margin: 'auto',
+          width: '100%',
           maxWidth: mobile ? 'none' : '500px',
         }"
       >

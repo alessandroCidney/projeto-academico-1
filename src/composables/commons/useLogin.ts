@@ -62,7 +62,7 @@ export function useLogin () {
       }
     } catch (err) {
       console.error(err)
-      snackbarStore.showErrorSnackbar()
+      snackbarStore.showErrorSnackbar('E-mail ou senha inválidos')
     } finally {
       loadingSignInWithEmailAndPassword.value = false
     }

@@ -1,5 +1,7 @@
 <template>
   <v-text-field
+    ref="textFieldRef"
+    :key="`updateKey${updateKey}`"
     v-model="modelValue"
     :type="showPassword ? 'text' : 'password'"
   >
@@ -23,7 +25,24 @@
 </template>
 
 <script setup lang="ts">
+const props = defineProps({
+  dependsOn: { type: String },
+})
+
+const textFieldRef = useTemplateRef('textFieldRef')
+
 const modelValue = defineModel<string>()
 
 const showPassword = ref(false)
+
+const updateKey = ref(0)
+
+watch(() => props.dependsOn, async (newValue) => {
+  console.log('dependsOn', newValue)
+  if (typeof newValue === 'string' && modelValue.value) {
+    updateKey.value++
+    await nextTick()
+    await textFieldRef.value?.validate()
+  }
+})
 </script>

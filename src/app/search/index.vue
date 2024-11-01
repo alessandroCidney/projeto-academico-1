@@ -4,28 +4,30 @@
   >
     <v-form
       v-model="validModel"
-      @submit.prevent
+      class="position-relative"
+      @submit.prevent="handleSearch"
     >
       <v-text-field
         ref="searchFieldRef"
         v-model="searchStr"
+        :rules="[rules.required]"
         class="font-weight-bold"
         placeholder="O que deseja buscar?"
         variant="solo"
         hide-details
         flat
-      >
-        <template #append-inner>
-          <v-btn
-            :disabled="!validModel"
-            :loading="loadingSearch"
-            variant="text"
-            icon="mdi-magnify"
-            class="normalLetterSpacing"
-            @click="handleSearch"
-          />
-        </template>
-      </v-text-field>
+      />
+
+      <v-btn
+        :disabled="!validModel"
+        :loading="loadingSearch"
+        type="submit"
+        variant="text"
+        icon="mdi-magnify"
+        class="normalLetterSpacing"
+        position="absolute"
+        location="right"
+      />
     </v-form>
 
     <v-divider class="mb-8" />
@@ -105,11 +107,14 @@
 </template>
 
 <script setup lang="ts">
+import { useRules } from '~/composables/commons/useRules'
 import { useNewsService } from '~/composables/services/useNewsService'
 import { useArticlesService } from '~/composables/services/useArticlesService'
 import type { FirestoreArticle } from '~/types'
 
 import { useSnackbarStore } from '~/store/snackbar'
+
+const rules = useRules()
 
 const snackbarStore = useSnackbarStore()
 

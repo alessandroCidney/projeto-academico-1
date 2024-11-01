@@ -13,11 +13,12 @@
 
     <v-form
       v-model="formIsValid"
-      @submit.prevent
+      @submit.prevent="handleResetPassword"
     >
       <div class="mb-5">
         <password-text-field
           v-model="resetPasswordFormData.password"
+          :rules="[rules.required, rules.strongPassword]"
           label="Senha"
           placeholder="Digite a senha desejada"
           variant="outlined"
@@ -25,17 +26,18 @@
 
         <password-text-field
           v-model="resetPasswordFormData.passwordConfirmation"
+          :rules="[rules.required, rules.valuesAreEqual(resetPasswordFormData.password)]"
+          :depends-on="resetPasswordFormData.password"
           label="Confirme a senha"
           placeholder="Digite a senha novamente"
           variant="outlined"
         />
       </div>
 
-      <div class="d-flex align-center justify-center">
+      <div class="d-flex align-center justify-center ga-2">
         <v-btn
-          :style="{ width: 'calc(50% - 8px) !important' }"
           to="/auth/login"
-          class="normalLetterSpacing mr-2"
+          class="normalLetterSpacing flex-fill"
           color="grey-lighten-4"
           variant="flat"
           size="large"
@@ -44,12 +46,12 @@
         </v-btn>
 
         <v-btn
-          :style="{ width: '50% !important' }"
-          class="normalLetterSpacing"
+          :disabled="!formIsValid"
+          type="submit"
+          class="normalLetterSpacing flex-fill"
           color="primary"
           variant="flat"
           size="large"
-          @click="handleResetPassword()"
         >
           Continuar
         </v-btn>
@@ -70,11 +72,15 @@ import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 
 import { useSnackbarStore } from '~/store/snackbar'
 
+import { useRules } from '~/composables/commons/useRules'
+
 const props = defineProps({
   actionCode: { type: String, required: true },
 })
 
 const nuxtApp = useNuxtApp()
+
+const rules = useRules()
 
 const snackbarStore = useSnackbarStore()
 

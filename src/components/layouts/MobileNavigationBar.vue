@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-primary mobileNavigationBar fillWidth">
+  <div class="bg-primary mobileNavigationBar w-100">
     <v-tabs
       v-model="currentRoute"
       align-tabs="center"

@@ -16,10 +16,14 @@
       Preencha os dados do seu perfil:
     </div>
 
-    <v-form>
+    <v-form
+      v-model="fillProfileDataFormIsValid"
+      @submit.prevent="handleCompleteRegistration"
+    >
       <div class="mb-5">
         <v-text-field
           v-model="userCreationPayload.public.displayName"
+          :rules="[rules.required, rules.maxLength(200)]"
           label="Nome"
           placeholder="Digite o seu nome"
           variant="outlined"
@@ -27,6 +31,7 @@
 
         <v-combobox
           v-model="userCreationPayload.public.position"
+          :rules="[rules.required]"
           :items="['Avaliador', 'Estudante', 'Visitante', 'Outro']"
           offset="top"
           label="Cargo"
@@ -36,10 +41,9 @@
         />
       </div>
 
-      <div class="d-flex align-center justify-center">
+      <div class="d-flex align-center justify-center ga-2">
         <v-btn
-          :style="{ width: 'calc(50% - 8px) !important' }"
-          class="normalLetterSpacing mr-2"
+          class="normalLetterSpacing flex-fill"
           color="grey-lighten-4"
           variant="flat"
           size="large"
@@ -49,12 +53,12 @@
         </v-btn>
 
         <v-btn
-          :style="{ width: '50% !important' }"
-          class="normalLetterSpacing"
+          :disabled="!fillProfileDataFormIsValid"
+          type="submit"
+          class="normalLetterSpacing flex-fill"
           color="primary"
           variant="flat"
           size="large"
-          @click="handleCompleteRegistration()"
         >
           Continuar
         </v-btn>
@@ -87,10 +91,14 @@
       Registre-se com e-mail e senha
     </div>
 
-    <v-form>
+    <v-form
+      v-model="registerFormIsValid"
+      @submit.prevent="handleRegisterWithEmailAndPassword"
+    >
       <div class="mb-5">
         <v-text-field
           v-model="emailRegisterFormData.email"
+          :rules="[rules.required, rules.email]"
           label="E-mail"
           placeholder="Digite seu e-mail"
           variant="outlined"
@@ -98,6 +106,7 @@
 
         <password-text-field
           v-model="emailRegisterFormData.password"
+          :rules="[rules.required, rules.strongPassword]"
           label="Senha"
           placeholder="Digite a senha desejada"
           variant="outlined"
@@ -105,16 +114,17 @@
 
         <password-text-field
           v-model="emailRegisterFormData.passwordConfirmation"
+          :rules="[rules.required, rules.valuesAreEqual(emailRegisterFormData.password)]"
+          :depends-on="emailRegisterFormData.password"
           label="Confirme a senha"
           placeholder="Digite a senha novamente"
           variant="outlined"
         />
       </div>
 
-      <div class="d-flex align-center justify-center">
+      <div class="d-flex align-center justify-center ga-2">
         <v-btn
-          :style="{ width: 'calc(50% - 8px) !important' }"
-          class="normalLetterSpacing mr-2"
+          class="normalLetterSpacing flex-fill"
           color="grey-lighten-4"
           variant="flat"
           size="large"
@@ -124,12 +134,12 @@
         </v-btn>
 
         <v-btn
-          :style="{ width: '50% !important' }"
-          class="normalLetterSpacing"
+          :disabled="!registerFormIsValid"
+          type="submit"
+          class="normalLetterSpacing flex-fill"
           color="primary"
           variant="flat"
           size="large"
-          @click="handleRegisterWithEmailAndPassword()"
         >
           Continuar
         </v-btn>
@@ -140,6 +150,8 @@
 
 <script setup lang="ts">
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, type UserCredential } from 'firebase/auth'
+
+import { useRules } from '~/composables/commons/useRules'
 
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 import { FirestoreUser, FirestoreUserPersonalData, useUsersService } from '~/composables/services/useUsersService'
@@ -153,6 +165,11 @@ const usersService = useUsersService()
 const loadingRegister = ref(false)
 
 const authenticatedUserCredential = ref<UserCredential>()
+
+const registerFormIsValid = ref(false)
+const fillProfileDataFormIsValid = ref(false)
+
+const rules = useRules()
 
 const emailRegisterFormData = ref({
   email: '',

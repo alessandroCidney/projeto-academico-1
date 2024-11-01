@@ -30,6 +30,8 @@ async function handleVerifyEmail () {
   } catch (err) {
     console.error(err)
     snackbarStore.showErrorSnackbar('Link inválido! Por favor, solicite um novo e-mail de verificação')
+
+    await navigateTo({ path: '/account/verify-email' })
   }
 }
 </script>

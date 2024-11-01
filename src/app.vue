@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="mainStore.loadingAuthPlugin"
+    v-if="mainStore.loadingAuthPlugin || loadingRoot"
     class="d-flex align-center justify-center appLoadingContainer"
   >
     <v-progress-circular
@@ -37,12 +37,18 @@ const route = useRoute()
 
 const mainStore = useMainStore()
 
+const loadingRoot = ref(false)
+
 onMounted(async () => {
+  loadingRoot.value = true
+
   await waitFor(() => !mainStore.loadingAuthPlugin)
 
   await authMiddlewareCheck(route)
 
   theme.global.name.value = 'mainTheme'
+
+  loadingRoot.value = false
 })
 </script>
 

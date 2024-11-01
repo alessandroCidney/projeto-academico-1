@@ -10,22 +10,37 @@
       />
     </template>
 
+    <template #submitButton="{ loading, action }">
+      <v-btn
+        :disabled="!validModel"
+        :loading="loading"
+        class="normalLetterSpacing px-8"
+        variant="flat"
+        color="primary"
+        text="Continuar"
+        @click="action"
+      />
+    </template>
+
     <v-form
       v-model="validModel"
       @submit.prevent="handleSubmit"
     >
       <v-text-field
         v-model="formPayload.displayName"
+        :rules="[rules.required, rules.maxLength(200)]"
         label="Nome"
       />
 
       <v-text-field
         v-model="formPayload.position"
+        :rules="[rules.required, rules.maxLength(200)]"
         label="Cargo"
       />
 
       <v-select
         v-model="formPayload.role"
+        :rules="[rules.required]"
         :items="['Viewer', 'Admin']"
         label="Nível de acesso"
       />
@@ -48,6 +63,8 @@
 <script setup lang="ts">
 import _ from 'lodash'
 
+import { useRules } from '~/composables/commons/useRules'
+
 import FormDialog from '~/components/commons/FormDialog.vue'
 
 import { FirestoreUser, useUsersService } from '~/composables/services/useUsersService'
@@ -56,6 +73,8 @@ const props = defineProps({
   initialPayload: { type: Object as PropType<FirestoreUser>, default: () => new FirestoreUser() },
   isUpdate: Boolean,
 })
+
+const rules = useRules()
 
 const usersService = useUsersService()
 

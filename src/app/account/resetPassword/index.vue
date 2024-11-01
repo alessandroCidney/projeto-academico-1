@@ -5,9 +5,11 @@
     </h1>
 
     <template v-if="confirmEmailIsFilled">
-      <div
+      <v-form
         v-if="accountStore.isAuthenticated && accountStore.userHasEmailAndPasswordLogin"
+        v-model="resetPasswordFormIsValid"
         class="mb-16"
+        @submit.prevent="reauthenticateAndUpdatePassword"
       >
         <div class="mb-5">
           Preencha as informações para continuar:
@@ -16,6 +18,7 @@
         <div>
           <password-text-field
             v-model="resetPasswordFormData.password"
+            :rules="[rules.required]"
             label="Senha anterior"
             placeholder="Digite a sua senha anterior"
             variant="outlined"
@@ -23,6 +26,7 @@
 
           <password-text-field
             v-model="resetPasswordFormData.newPassword"
+            :rules="[rules.required, rules.strongPassword]"
             label="Nova senha"
             placeholder="Digite a nova senha desejada"
             variant="outlined"
@@ -30,6 +34,8 @@
 
           <password-text-field
             v-model="resetPasswordFormData.newPasswordConfirmation"
+            :rules="[rules.required, rules.valuesAreEqual(resetPasswordFormData.newPassword)]"
+            :depends-on="resetPasswordFormData.newPassword"
             label="Confirme a nova senha"
             placeholder="Digite a nova senha novamente"
             variant="outlined"
@@ -37,17 +43,18 @@
         </div>
 
         <v-btn
+          :disabled="!resetPasswordFormIsValid"
           :loading="loadingReauthenticateAndUpdatePassword"
+          type="submit"
           class="normalLetterSpacing text-white"
           color="primary"
           variant="flat"
           size="large"
           block
-          @click="reauthenticateAndUpdatePassword"
         >
           Continuar
         </v-btn>
-      </div>
+      </v-form>
 
       <div class="mb-5">
         <div class="font-weight-bold mb-5">
@@ -92,7 +99,9 @@
 
     <template v-else>
       <v-form
-        @submit.prevent
+        v-model="fillEmailFormIsValid"
+        class="w-100"
+        @submit.prevent="confirmEmailIsFilled = true"
       >
         <div class="mb-5">
           Informe seu email para iniciar o processo de redefinição:
@@ -101,17 +110,17 @@
         <div>
           <v-text-field
             v-model="resetPasswordFormData.email"
+            :rules="[rules.required, rules.email]"
             label="E-mail"
             placeholder="Digite seu e-mail"
             variant="outlined"
           />
         </div>
 
-        <div class="d-flex align-center justify-center">
+        <div class="d-flex align-center justify-center ga-2 w-100">
           <v-btn
-            :style="{ width: 'calc(50% - 8px) !important' }"
             to="/auth/login"
-            class="normalLetterSpacing mr-2"
+            class="normalLetterSpacing flex-fill"
             color="grey-lighten-4"
             variant="flat"
             size="large"
@@ -120,12 +129,12 @@
           </v-btn>
 
           <v-btn
-            :style="{ width: '50% !important' }"
-            class="normalLetterSpacing"
+            :disabled="!fillEmailFormIsValid"
+            type="submit"
+            class="normalLetterSpacing flex-fill"
             color="primary"
             variant="flat"
             size="large"
-            @click="confirmEmailIsFilled = true"
           >
             Continuar
           </v-btn>
@@ -138,6 +147,8 @@
 <script setup lang="ts">
 import { EmailAuthProvider, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword } from 'firebase/auth'
 
+import { useRules } from '~/composables/commons/useRules'
+
 import PasswordTextField from '~/components/commons/PasswordTextField.vue'
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 
@@ -146,11 +157,16 @@ import { useSnackbarStore } from '~/store/snackbar'
 
 const nuxtApp = useNuxtApp()
 
+const rules = useRules()
+
 const accountStore = useAccountStore()
 const snackbarStore = useSnackbarStore()
 
 const loadingReauthenticateAndUpdatePassword = ref(false)
 const loadingSendPasswordResetEmail = ref(false)
+
+const resetPasswordFormIsValid = ref()
+const fillEmailFormIsValid = ref()
 
 const confirmEmailIsFilled = ref(!!accountStore.firestoreUserPrivateData?.email)
 
