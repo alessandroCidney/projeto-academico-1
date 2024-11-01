@@ -8,5 +8,6 @@ import Page from '@/app/policies/index.vue'
 definePageMeta({
   layout: 'policies',
   noRedirect: true,
+  isALoginRoute: true,
 })
 </script>

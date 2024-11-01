@@ -156,7 +156,7 @@
       <div class="text-caption text-disabled text-center">
         Ao se registrar na plataforma, você aceita nossas
         <nuxt-link
-          to="privacy-policy"
+          to="/policies"
           class="text-decoration-underline"
         >
           Políticas e Termos

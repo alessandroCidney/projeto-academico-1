@@ -63,7 +63,7 @@
       </div>
 
       <div>
-        <nuxt-link to="privacy-policy">
+        <nuxt-link to="/policies">
           Políticas e termos
         </nuxt-link>
       </div>

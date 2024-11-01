@@ -12,7 +12,10 @@
       />
     </template>
 
-    <template #append>
+    <template
+      v-if="!disableButtons"
+      #append
+    >
       <v-btn
         v-if="accountStore.firestoreUserData?.role === 'Admin'"
         to="/admin/users"
@@ -31,4 +34,8 @@
 import { useAccountStore } from '~/store/account'
 
 const accountStore = useAccountStore()
+
+defineProps({
+  disableButtons: Boolean,
+})
 </script>
