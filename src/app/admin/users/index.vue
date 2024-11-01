@@ -29,11 +29,19 @@
     </div>
 
     <div>
-      <h2 class="text-h6 font-weight-bold">
-        Usuários Cadastrados
-      </h2>
+      <template v-if="usersList.length === 0">
+        <warning-screen
+          title="Sem usuários cadastrados"
+          description="Os usuários que se cadastrarem aparecerão aqui"
+          image="/images/illustrations/users.svg"
+        />
+      </template>
 
-      <v-list>
+      <v-list v-else>
+        <h2 class="text-h6 font-weight-bold">
+          Usuários Cadastrados
+        </h2>
+
         <template
           v-for="(userData, userIndex) in usersList"
           :key="`user${userIndex}`"
@@ -95,6 +103,7 @@
 import UserForm from './component/UserForm.vue'
 import UserRemovalForm from './component/UserRemovalForm.vue'
 
+import WarningScreen from '~/components/commons/WarningScreen.vue'
 import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 import { useSnackbarStore } from '~/store/snackbar'

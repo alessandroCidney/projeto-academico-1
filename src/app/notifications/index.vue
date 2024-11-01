@@ -19,7 +19,18 @@
       Notificações
     </h1>
 
-    <v-list class="itemsList">
+    <template v-if="notificationsList.length === 0">
+      <warning-screen
+        title="Sem notificações"
+        description="Você não recebeu novas notificações até o momento"
+        image="/images/illustrations/notifications.svg"
+      />
+    </template>
+
+    <v-list
+      v-else
+      class="itemsList"
+    >
       <template
         v-for="(notificationData, notificationDataIndex) in notificationsList"
         :key="`notificationData${notificationDataIndex}`"
@@ -58,6 +69,7 @@ import { useSnackbarStore } from '~/store/snackbar'
 
 import { type FirestoreUserNotification, useUsersService } from '~/composables/services/useUsersService'
 
+import WarningScreen from '~/components/commons/WarningScreen.vue'
 import UserAvatar from '~/components/commons/UserAvatar.vue'
 
 const accountStore = useAccountStore()

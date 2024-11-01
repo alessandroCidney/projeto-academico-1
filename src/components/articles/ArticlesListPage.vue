@@ -38,41 +38,62 @@
     </v-fab>
 
     <div>
-      <template
-        v-for="item in allowedItems"
-        :key="item._id"
-      >
-        <slot
-          :item="item"
-          name="item"
+      <template v-if="allowedItems.length === 0">
+        <warning-screen
+          title="Sem postagens criadas"
+          description="Clique no botão abaixo para cadastrar uma nova postagem"
         >
-          <v-card
-            height="330px"
-            class="mb-7"
-            @click="navigateTo({ path: `${$route.path}/${item._id}` })"
+          <template #append>
+            <v-btn
+              :to="`${$route.path}/create`"
+              class="normalLetterSpacing text-white"
+              prepend-icon="mdi-plus"
+              color="primary"
+              size="large"
+            >
+              Criar nova postagem
+            </v-btn>
+          </template>
+        </warning-screen>
+      </template>
+
+      <template v-else>
+        <template
+          v-for="item in allowedItems"
+          :key="item._id"
+        >
+          <slot
+            :item="item"
+            name="item"
           >
-            <image-with-loader
-              :src="item.imageUrl"
-              height="200px"
-              width="100%"
-              cover
-            />
+            <v-card
+              height="330px"
+              class="mb-7"
+              @click="navigateTo({ path: `${$route.path}/${item._id}` })"
+            >
+              <image-with-loader
+                :src="item.imageUrl"
+                height="200px"
+                width="100%"
+                cover
+              />
 
-            <div class="py-4">
-              <v-card-subtitle>
-                {{ item.tags.join(', ') }}
-              </v-card-subtitle>
+              <div class="py-4">
+                <v-card-subtitle>
+                  {{ item.tags.join(', ') }}
+                </v-card-subtitle>
 
-              <v-card-title>
-                {{ item.title }}
-              </v-card-title>
+                <v-card-title>
+                  {{ item.title }}
+                </v-card-title>
 
-              <v-card-text class="pb-0">
-                {{ item.description }}
-              </v-card-text>
-            </div>
-          </v-card>
-        </slot>
+                <v-card-text class="pb-0">
+                  {{ item.description }}
+                </v-card-text>
+              </div>
+            </v-card>
+          </slot>
+        </template>
       </template>
     </div>
   </div>
@@ -87,6 +108,7 @@ import type { useArticlesService } from '~/composables/services/useArticlesServi
 import { useAccountStore } from '~/store/account'
 
 import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
+import WarningScreen from '~/components/commons/WarningScreen.vue'
 
 const { mobile } = useDisplay()
 
