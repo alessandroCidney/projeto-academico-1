@@ -19,6 +19,8 @@ Para rodar o projeto localmente, é preciso realizar algumas configurações e �
 ### Considerações iniciais
 Para melhorar a compatibilidade, o projeto foi desenvolvido no sistema Linux/Ubuntu utilizando o WSL. Portanto, pode ser que hajam problemas na execução em outros ambientes.
 
+Outro detalhe é que o projeto necessita de variáveis de ambiente cujo compartilhamento é perigoso e, por segurança, não deve ser realizado. Portanto, nos tópicos a seguir você será instruído sobre como obter as suas próprias variáveis de ambiente.
+
 ### Clonando o repositório
 Para iniciar a configuração, você precisa ter o projeto em sua máquina. Você pode obtê-lo pelo Github utilizando as opções de cloná-lo com comandos Git ou fazendo o download diretamente.
 
@@ -64,4 +66,11 @@ firebase login
 Para fazer o deploy:
 ```
 firebase deploy
+```
+
+### Rodando localmente
+Por fim, para executar o projeto localmente, utilize o comando:
+
+```
+yarn dev
 ```
