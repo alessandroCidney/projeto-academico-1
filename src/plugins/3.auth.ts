@@ -15,8 +15,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   firebaseAuth.onAuthStateChanged(async (authUser) => {
     try {
-      console.log('authUser', authUser)
-
       if (authUser) {
         const userData = await usersService.get(authUser.uid)
 
@@ -35,7 +33,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       accountStore.setFirestoreUserData(undefined)
       accountStore.setFirestoreUserPrivateData(undefined)
     } finally {
-      console.log('end plugin')
       mainStore.setLoadingAuthPlugin(false)
     }
   })

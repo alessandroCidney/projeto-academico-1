@@ -38,7 +38,6 @@ const showPassword = ref(false)
 const updateKey = ref(0)
 
 watch(() => props.dependsOn, async (newValue) => {
-  console.log('dependsOn', newValue)
   if (typeof newValue === 'string' && modelValue.value) {
     updateKey.value++
     await nextTick()
