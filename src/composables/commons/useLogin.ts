@@ -1,4 +1,5 @@
-import { EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, type UserCredential } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app'
+import { AuthErrorCodes, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, type UserCredential } from 'firebase/auth'
 
 import { useUsersService } from '~/composables/services/useUsersService'
 
@@ -15,6 +16,22 @@ export function useLogin () {
 
   const loadingLoginWithGoogle = ref(false)
   const loadingSignInWithEmailAndPassword = ref(false)
+
+  function getFirebaseErrorMessage (err: FirebaseError) {
+    switch (err.code) {
+      case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
+      case AuthErrorCodes.INVALID_PASSWORD:
+        return 'E-mail ou senha inválidos'
+      case AuthErrorCodes.POPUP_BLOCKED:
+        return 'O popup de autenticação foi bloqueado. Revise as configurações de seu navegador'
+      case AuthErrorCodes.POPUP_CLOSED_BY_USER:
+        return 'O popup de autenticação foi fechado'
+      case AuthErrorCodes.EXPIRED_POPUP_REQUEST:
+        return 'A solicitação de autenticação via popup expirou. Por favor, tente novamente'
+      case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
+        return 'Limite de tentativas atingido! Por favor, tente novamente mais tarde'
+    }
+  }
 
   async function handleValidateLogin (userCredential: UserCredential) {
     try {
@@ -38,6 +55,10 @@ export function useLogin () {
 
       const googleAuthProvider = new GoogleAuthProvider()
 
+      googleAuthProvider.setCustomParameters({
+        prompt: 'select_account',
+      })
+
       const userCredential = await signInWithPopup(nuxtApp.$firebaseAuth, googleAuthProvider)
 
       if (validateLogin) {
@@ -45,7 +66,12 @@ export function useLogin () {
       }
     } catch (err) {
       console.error(err)
-      snackbarStore.showErrorSnackbar()
+
+      if (err instanceof FirebaseError) {
+        snackbarStore.showErrorSnackbar(getFirebaseErrorMessage(err))
+      } else {
+        snackbarStore.showErrorSnackbar()
+      }
     } finally {
       loadingLoginWithGoogle.value = false
     }
@@ -62,7 +88,12 @@ export function useLogin () {
       }
     } catch (err) {
       console.error(err)
-      snackbarStore.showErrorSnackbar('E-mail ou senha inválidos')
+
+      if (err instanceof FirebaseError) {
+        snackbarStore.showErrorSnackbar(getFirebaseErrorMessage(err))
+      } else {
+        snackbarStore.showErrorSnackbar()
+      }
     } finally {
       loadingSignInWithEmailAndPassword.value = false
     }

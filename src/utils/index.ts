@@ -17,11 +17,14 @@ export function waitFor (conditionFn: (...params: unknown[]) => boolean) {
   })
 }
 
-export function selectFile (callbackFn: (file: File) => void) {
+export const defaultAllowedImageExtensions = '.png, .jpg, .jpeg'
+
+export function selectFile (callbackFn: (file: File) => void, accept = defaultAllowedImageExtensions) {
   const input: HTMLInputElement = document.createElement('input')
 
   input.type = 'file'
   input.style.display = 'none'
+  input.accept = accept
 
   input.addEventListener('input', () => {
     if (input.files?.[0]) {

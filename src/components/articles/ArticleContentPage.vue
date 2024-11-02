@@ -131,6 +131,7 @@ import { useUsersService, type FirestoreUserNotificationTarget } from '~/composa
 import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 
 import { useAccountStore } from '~/store/account'
+import { useSnackbarStore } from '~/store/snackbar'
 
 const router = useRouter()
 
@@ -141,6 +142,7 @@ const props = defineProps({
 })
 
 const accountStore = useAccountStore()
+const snackbarStore = useSnackbarStore()
 
 const usersService = useUsersService()
 
@@ -163,6 +165,12 @@ async function handleGet () {
     articleData.value = await props.service.get(props.articleId)
   } catch (err) {
     console.error(err)
+
+    if (err instanceof Error && err.message === 'Not found') {
+      snackbarStore.showErrorSnackbar('A notícia ou artigo acessado não existe')
+    } else {
+      snackbarStore.showErrorSnackbar()
+    }
   } finally {
     loadingGet.value = false
   }

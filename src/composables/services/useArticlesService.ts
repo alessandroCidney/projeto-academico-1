@@ -1,6 +1,9 @@
 import { ref as storageRef, uploadBytes } from 'firebase/storage'
 
 import { useFirestoreCrud } from './useFirestoreCrud'
+import { useUsersService } from '~/composables/services/useUsersService'
+
+import { useAccountStore } from '~/store/account'
 
 import type { FirestoreComment, FirestoreLike, FirestoreArticle } from '~/types'
 
@@ -10,6 +13,9 @@ export function useArticlesService (basePath = 'articles') {
   const nuxtApp = useNuxtApp()
 
   const firestoreCrud = useFirestoreCrud<FirestoreArticle>(basePath)
+
+  const accountStore = useAccountStore()
+  const usersService = useUsersService()
 
   function useArticlesLikeService (itemId: string, basePath = 'articles') {
     const likesFirestoreCrud = useFirestoreCrud<FirestoreLike>(`${basePath}/${itemId}/likes`)
@@ -34,7 +40,13 @@ export function useArticlesService (basePath = 'articles') {
 
       const formattedResults = await Promise.all(results.map(fillItemImageUrl))
 
-      return formattedResults
+      for (const itemData of formattedResults) {
+        await usersService.getUserAndSaveToStoreCache(itemData.authorId)
+      }
+
+      return formattedResults.filter(itemData => accountStore.cachedUsers[itemData.authorId]?.manuallyVerified
+        || accountStore.authUserData?.uid === itemData.authorId,
+      )
     },
 
     async get (itemId: string) {
