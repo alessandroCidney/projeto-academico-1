@@ -51,6 +51,10 @@
             {{ actionDetails[notificationData.action].text }}
             {{ actionDetails[notificationData.action].target[notificationData.target] }}
           </v-list-item-title>
+
+          <v-list-item-subtitle>
+            {{ moment(notificationData.createdAt).format('LLL') }}
+          </v-list-item-subtitle>
         </v-list-item>
 
         <v-divider
@@ -62,7 +66,11 @@
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash'
 import { ref } from 'vue'
+
+import moment from 'moment'
+import 'moment/dist/locale/pt-br'
 
 import { useAccountStore } from '~/store/account'
 import { useSnackbarStore } from '~/store/snackbar'
@@ -71,6 +79,8 @@ import { type FirestoreUserNotification, useUsersService } from '~/composables/s
 
 import WarningScreen from '~/components/commons/WarningScreen.vue'
 import UserAvatar from '~/components/commons/UserAvatar.vue'
+
+moment.locale('pt-br')
 
 const accountStore = useAccountStore()
 const snackbarStore = useSnackbarStore()
@@ -113,6 +123,8 @@ async function handleList () {
     notificationsList.value = await usersService
       .useNotificationsService(accountStore.authUserData.uid)
       .list()
+
+    notificationsList.value = _.orderBy(notificationsList.value, ['createdAt'], ['desc'])
 
     for (const notificationData of notificationsList.value) {
       await usersService.getUserAndSaveToStoreCache(notificationData.authorId)

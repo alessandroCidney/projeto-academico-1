@@ -93,14 +93,16 @@ import CommentsListItem from './components/CommentsListItem.vue'
 import type { FirestoreComment } from '~/types'
 
 import { useAccountStore } from '~/store/account'
-import { useUsersService } from '~/composables/services/useUsersService'
+import { type FirestoreUserNotificationTarget, useUsersService } from '~/composables/services/useUsersService'
 
 const accountStore = useAccountStore()
 
 const props = defineProps({
+  articleData: { type: Object, required: true },
   list: { type: Function as PropType<() => Promise<FirestoreComment[]>>, required: true },
   create: { type: Function as PropType<(itemId: string, payload: FirestoreComment) => Promise<unknown>>, required: true },
   update: { type: Function as PropType<(itemId: string, payload: FirestoreComment) => Promise<unknown>>, required: true },
+  type: { type: String as PropType<FirestoreUserNotificationTarget>, required: true },
 })
 
 const usersService = useUsersService()
@@ -152,6 +154,16 @@ async function handleCreate () {
     }
 
     await props.create(newCommentId, newCommentData)
+
+    const newNotificationId = uuidV4()
+
+    await usersService.useNotificationsService(props.articleData.authorId).create(newNotificationId, {
+      _id: newNotificationId,
+      action: 'comment',
+      authorId: accountStore.authUserData.uid,
+      createdAt: new Date().toISOString(),
+      target: props.type,
+    })
 
     handleResetCreation()
 

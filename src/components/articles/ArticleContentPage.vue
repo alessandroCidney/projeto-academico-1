@@ -53,7 +53,7 @@
 
     <div class="mb-5">
       <image-with-loader
-        :src="articleData.imageUrl"
+        :src="articleData.imageUrl || '/images/illustrations/article-with-background.jpg'"
         class="rounded-lg"
         height="200px"
         width="100%"
@@ -113,9 +113,11 @@
 
     <comments-list
       v-if="showComments"
+      :article-data="articleData"
       :list="service.commentsService(articleId).list"
       :create="service.commentsService(articleId).create"
       :update="service.commentsService(articleId).update"
+      :type="type"
     />
   </div>
 </template>

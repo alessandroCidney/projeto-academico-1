@@ -13,7 +13,7 @@
         <div class="d-flex align-start justify-start">
           <div>
             <image-with-loader
-              :src="item.imageUrl"
+              :src="item.imageUrl || '/images/illustrations/article-with-background.jpg'"
               height="110px"
               width="110px"
               class="rounded-lg"

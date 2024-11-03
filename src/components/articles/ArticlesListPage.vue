@@ -72,7 +72,7 @@
               @click="navigateTo({ path: `${$route.path}/${item._id}` })"
             >
               <image-with-loader
-                :src="item.imageUrl"
+                :src="item.imageUrl || '/images/illustrations/article-with-background.jpg'"
                 height="200px"
                 width="100%"
                 cover

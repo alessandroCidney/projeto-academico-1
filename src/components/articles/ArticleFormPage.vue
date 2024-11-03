@@ -63,7 +63,7 @@
       <v-select
         v-model="payload.tags"
         :rules="[rules.required]"
-        :items="['Atividades', 'Cotidiano', 'Tutorial', 'Dúvidas frequentes', 'Dicas', 'Notícias', 'Urgente', 'Regras']"
+        :items="['Atividades', 'Cotidiano', 'Tutorial', 'Dúvidas frequentes', 'Dicas', 'Notícias', 'Urgente', 'Regras', 'Outro']"
         label="Selecionar Tags"
         variant="outlined"
         multiple
@@ -82,7 +82,7 @@
       </v-btn>
 
       <v-btn
-        :disabled="!validModel || !selectedFile"
+        :disabled="!validModel"
         :loading="isUpdate ? loadingUpdate : loadingCreate"
         class="normalLetterSpacing flex-fill"
         color="primary"
