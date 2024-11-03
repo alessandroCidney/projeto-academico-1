@@ -102,7 +102,6 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 
-import { useUsersService } from '~/composables/services/useUsersService'
 import type { useArticlesService } from '~/composables/services/useArticlesService'
 
 import { useAccountStore } from '~/store/account'
@@ -118,8 +117,6 @@ const props = defineProps({
 })
 
 const accountStore = useAccountStore()
-
-const usersService = useUsersService()
 
 const loadingItems = ref(false)
 
@@ -141,10 +138,6 @@ async function handleList () {
     loadingItems.value = true
 
     items.value = await props.service.list()
-
-    for (const itemData of items.value) {
-      await usersService.getUserAndSaveToStoreCache(itemData.authorId)
-    }
   } catch (err) {
     console.error(err)
   } finally {

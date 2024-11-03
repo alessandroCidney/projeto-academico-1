@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { useTheme } from 'vuetify'
 
-import { authMiddlewareCheck } from './middleware/auth.global'
+import { authMiddlewareCheck } from './middleware/2.auth.global'
 
 import AppSnackbar from '~/components/commons/AppSnackbar.vue'
 

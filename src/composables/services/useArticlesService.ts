@@ -41,7 +41,11 @@ export function useArticlesService (basePath = 'articles') {
       const formattedResults = await Promise.all(results.map(fillItemImageUrl))
 
       for (const itemData of formattedResults) {
-        await usersService.getUserAndSaveToStoreCache(itemData.authorId)
+        try {
+          await usersService.getUserAndSaveToStoreCache(itemData.authorId)
+        } catch (err) {
+          console.error(err)
+        }
       }
 
       return formattedResults.filter(itemData => accountStore.cachedUsers[itemData.authorId]?.manuallyVerified
