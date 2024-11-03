@@ -15,6 +15,7 @@
     v-else
     :initial-payload="initialPayload"
     :service="service"
+    :type="type"
     is-update
   />
 </template>
@@ -29,6 +30,7 @@ import { FirestoreArticle } from '~/types'
 const props = defineProps({
   service: { type: Object as PropType<ReturnType<typeof useArticlesService>>, required: true },
   articleId: { type: String, required: true },
+  type: { type: String, required: true },
 })
 
 const loadingGet = ref(false)

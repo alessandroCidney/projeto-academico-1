@@ -71,7 +71,7 @@ async function handleUpdateSelectedFile (file: File) {
   const fileSizeInMb = file.size / 1024 / 1024
 
   if (fileSizeInMb > 5) {
-    return snackbarStore.showErrorSnackbar('No máximo 5MB')
+    return snackbarStore.showErrorSnackbar('Tamanho máximo atingido (5MB)')
   }
 
   selectedFile.value = file

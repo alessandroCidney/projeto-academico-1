@@ -1,6 +1,7 @@
 <template>
   <article-form-page
     :service="newsService"
+    type="news"
   />
 </template>
 

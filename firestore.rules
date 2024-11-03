@@ -49,7 +49,8 @@ service cloud.firestore {
     match /news/{newsId} {
     	allow read: if isAuthenticated()
     	allow create: if isAuthenticated() && youWillBeTheAuthor()
-      allow update, delete: if isAuthenticated() && resource.data.authorId == request.auth.uid
+      allow update: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      allow delete: if isAuthenticated() && youIsTheAuthor()
       
       match /likes/{likeId} {
       	allow read, write: if isAuthenticated() && likeId == request.auth.uid
@@ -65,7 +66,8 @@ service cloud.firestore {
     match /articles/{articleId} {
     	allow read: if isAuthenticated()
     	allow create: if isAuthenticated() && youWillBeTheAuthor()
-      allow update, delete: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      allow update: if isAuthenticated() && youIsTheAuthor() && youWillBeTheAuthor()
+      allow delete: if isAuthenticated() && youIsTheAuthor()
       
       match /likes/{likeId} {
       	allow read, write: if isAuthenticated() && likeId == request.auth.uid

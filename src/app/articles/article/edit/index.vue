@@ -3,6 +3,7 @@
     v-if="typeof route.params.articleId === 'string'"
     :article-id="route.params.articleId"
     :service="articlesService"
+    type="articles"
   />
 </template>
 

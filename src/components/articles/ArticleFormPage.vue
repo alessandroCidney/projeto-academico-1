@@ -111,12 +111,11 @@ import { FirestoreArticle } from '~/types'
 const props = defineProps({
   service: { type: Object as PropType<ReturnType<typeof useArticlesService>>, required: true },
   initialPayload: { type: Object as PropType<FirestoreArticle>, default: () => new FirestoreArticle() },
+  type: { type: String, required: true },
   isUpdate: Boolean,
 })
 
 const rules = useRules()
-
-const router = useRouter()
 
 const accountStore = useAccountStore()
 
@@ -149,7 +148,7 @@ async function handleCreate () {
       selectedFile.value as File,
     )
 
-    router.back()
+    await navigateTo({ path: `/${props.type}/${_id}` })
   } catch (err) {
     console.error(err)
   } finally {
@@ -178,7 +177,7 @@ async function handleUpdate () {
       selectedFile.value,
     )
 
-    router.back()
+    await navigateTo({ path: `/${props.type}/${_id}` })
   } catch (err) {
     console.error(err)
   } finally {

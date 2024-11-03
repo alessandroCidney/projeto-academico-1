@@ -156,6 +156,12 @@ async function handleUpdateProfilePhoto (file: File) {
       throw new Error('Unauthenticated')
     }
 
+    const fileSizeInMb = file.size / 1024 / 1024
+
+    if (fileSizeInMb > 5) {
+      return snackbarStore.showErrorSnackbar('Tamanho máximo atingido (5MB)')
+    }
+
     loadingUpdateProfilePhoto.value = true
 
     const updatedUser = await usersService.update(

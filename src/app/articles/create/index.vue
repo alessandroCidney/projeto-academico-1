@@ -1,6 +1,7 @@
 <template>
   <article-form-page
     :service="articlesService"
+    type="articles"
   />
 </template>
 
