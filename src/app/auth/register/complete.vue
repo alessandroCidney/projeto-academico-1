@@ -112,7 +112,7 @@ async function handleCompleteRegistration () {
       completedRegistration: true,
     })
 
-    reloadNuxtApp()
+    window.location.href = `${window.location.origin}`
   } catch (err) {
     console.error(err)
     snackbarStore.showErrorSnackbar()
