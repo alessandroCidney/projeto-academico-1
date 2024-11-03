@@ -87,7 +87,7 @@
                   {{ item.title }}
                 </v-card-title>
 
-                <v-card-text class="pb-0">
+                <v-card-text class="pb-0 articleCardDescription">
                   {{ item.description }}
                 </v-card-text>
               </div>
@@ -152,3 +152,14 @@ async function handleList () {
   }
 }
 </script>
+
+<style lang="scss">
+.articleCardDescription {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

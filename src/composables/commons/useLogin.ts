@@ -1,5 +1,5 @@
 import { FirebaseError } from 'firebase/app'
-import { AuthErrorCodes, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, type UserCredential } from 'firebase/auth'
+import { AuthErrorCodes, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut, type UserCredential } from 'firebase/auth'
 
 import { useUsersService } from '~/composables/services/useUsersService'
 
@@ -125,6 +125,18 @@ export function useLogin () {
     await reauthenticateWithCredential(nuxtApp.$firebaseAuth.currentUser, credential)
   }
 
+  async function handleSignOut ({ redirect = true } = {}) {
+    await signOut(nuxtApp.$firebaseAuth)
+
+    accountStore.setAuthUserData(undefined)
+    accountStore.setFirestoreUserData(undefined)
+    accountStore.setFirestoreUserPrivateData(undefined)
+
+    if (redirect) {
+      await navigateTo({ path: '/auth/login' })
+    }
+  }
+
   return {
     handleValidateLogin,
     handleLoginWithGoogle,
@@ -135,5 +147,7 @@ export function useLogin () {
 
     reauthenticateWithGoogle,
     reauthenticateWithEmailAndPassword,
+
+    handleSignOut,
   }
 }

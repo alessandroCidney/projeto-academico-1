@@ -7,7 +7,6 @@ import Page from '@/app/account/verifyEmail/index.vue'
 
 definePageMeta({
   layout: 'clear',
-  isALoginRoute: true,
-  noRedirect: true,
+  allowUnauthenticated: true,
 })
 </script>

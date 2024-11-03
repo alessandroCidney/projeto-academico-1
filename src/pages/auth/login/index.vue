@@ -7,6 +7,7 @@ import Page from '@/app/auth/login/index.vue'
 
 definePageMeta({
   layout: 'clear',
-  isALoginRoute: true,
+  allowUnauthenticated: true,
+  onlyUnauthenticated: true,
 })
 </script>

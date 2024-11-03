@@ -10,7 +10,7 @@
         flat
         @click="$router.push(`/articles/${item._id}`)"
       >
-        <div class="d-flex align-center justify-start">
+        <div class="d-flex align-start justify-start">
           <div>
             <image-with-loader
               :src="item.imageUrl"
@@ -21,7 +21,7 @@
             />
           </div>
 
-          <div class="py-4">
+          <div>
             <v-card-subtitle>
               <v-chip
                 v-for="(itemTag, itemTagIndex) in item.tags"

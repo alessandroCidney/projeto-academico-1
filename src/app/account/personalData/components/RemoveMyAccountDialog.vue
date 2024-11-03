@@ -10,7 +10,7 @@
       />
     </template>
 
-    <div>
+    <div class="mb-5">
       A sua conta será excluída e você perderá acesso à plataforma.
       Deseja continuar?
     </div>
@@ -18,6 +18,7 @@
     <v-form
       v-if="!accountStore.userHasGoogleLogin"
       v-model="validModel"
+      @submit.prevent
     >
       <password-text-field
         v-model="userPassword"

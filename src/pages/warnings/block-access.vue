@@ -3,11 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import Page from '@/app/auth/register/index.vue'
+import Page from '~/app/warnings/blockAccess.vue'
 
 definePageMeta({
   layout: 'clear',
-  allowUnauthenticated: true,
-  onlyUnauthenticated: true,
 })
 </script>

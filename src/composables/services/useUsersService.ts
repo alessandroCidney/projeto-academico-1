@@ -17,6 +17,7 @@ export class FirestoreUser {
   blockAccess = false
   manuallyVerified = false
   emailVerified = false
+  completedRegistration = false
 
   imagePath = ''
   imageUrl = ''

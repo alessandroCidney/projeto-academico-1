@@ -11,7 +11,7 @@ export function useRules () {
     },
 
     strongPassword (value?: string | null) {
-      const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+      const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/
 
       return (!!value && strongPasswordRegex.test(value)) || 'Pelo menos 8 caracteres, contendo letras maiúsculas e minúsculas, números e caracteres especiais'
     },

@@ -73,25 +73,14 @@
 </template>
 
 <script setup lang="ts">
-import { signOut } from 'firebase/auth'
-
 import UserAvatar from '~/components/commons/UserAvatar.vue'
 
+import { useLogin } from '~/composables/commons/useLogin'
 import { useAccountStore } from '~/store/account'
 
 const accountStore = useAccountStore()
 
-const nuxtApp = useNuxtApp()
-
-async function handleSignOut () {
-  await signOut(nuxtApp.$firebaseAuth)
-
-  accountStore.setAuthUserData(undefined)
-  accountStore.setFirestoreUserData(undefined)
-  accountStore.setFirestoreUserPrivateData(undefined)
-
-  await navigateTo({ path: '/auth/login' })
-}
+const { handleSignOut } = useLogin()
 </script>
 
 <style lang="scss">

@@ -26,7 +26,7 @@ async function handleVerifyEmail () {
 
     snackbarStore.showSuccessSnackbar('E-mail verificado com sucesso!')
 
-    reloadNuxtApp()
+    window.location.href = `${window.location.origin}`
   } catch (err) {
     console.error(err)
     snackbarStore.showErrorSnackbar('Link inválido! Por favor, solicite um novo e-mail de verificação')

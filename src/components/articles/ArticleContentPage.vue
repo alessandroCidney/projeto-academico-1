@@ -61,7 +61,7 @@
       />
     </div>
 
-    <div class="mb-5 px-2">
+    <div class="mb-5 px-2 articleContentArea">
       {{ articleData.content }}
     </div>
 
@@ -261,3 +261,9 @@ async function handleShare () {
   }
 }
 </script>
+
+<style lang="scss">
+.articleContentArea {
+  white-space: pre-wrap;
+}
+</style>

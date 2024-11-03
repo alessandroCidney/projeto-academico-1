@@ -11,61 +11,6 @@
     />
   </div>
 
-  <login-page-container v-else-if="authenticatedUserCredential">
-    <div class="font-weight-bold mb-5">
-      Preencha os dados do seu perfil:
-    </div>
-
-    <v-form
-      v-model="fillProfileDataFormIsValid"
-      @submit.prevent="handleCompleteRegistration"
-    >
-      <div class="mb-5">
-        <v-text-field
-          v-model="userCreationPayload.public.displayName"
-          :rules="[rules.required, rules.maxLength(200)]"
-          label="Nome"
-          placeholder="Digite o seu nome"
-          variant="outlined"
-        />
-
-        <v-combobox
-          v-model="userCreationPayload.public.position"
-          :rules="[rules.required]"
-          :items="['Avaliador', 'Estudante', 'Visitante', 'Outro']"
-          offset="top"
-          label="Cargo"
-          placeholder="Digite o seu cargo"
-          variant="outlined"
-          max-height="500px"
-        />
-      </div>
-
-      <div class="d-flex align-center justify-center ga-2">
-        <v-btn
-          class="normalLetterSpacing flex-fill"
-          color="grey-lighten-4"
-          variant="flat"
-          size="large"
-          @click="handleCancel()"
-        >
-          Cancelar
-        </v-btn>
-
-        <v-btn
-          :disabled="!fillProfileDataFormIsValid"
-          type="submit"
-          class="normalLetterSpacing flex-fill"
-          color="primary"
-          variant="flat"
-          size="large"
-        >
-          Continuar
-        </v-btn>
-      </div>
-    </v-form>
-  </login-page-container>
-
   <login-page-container v-else>
     <v-btn
       class="normalLetterSpacing mb-5"
@@ -128,7 +73,7 @@
           color="grey-lighten-4"
           variant="flat"
           size="large"
-          @click="handleCancel()"
+          @click="navigateTo({ path: '/auth/login' })"
         >
           Cancelar
         </v-btn>
@@ -167,9 +112,13 @@
 </template>
 
 <script setup lang="ts">
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, type UserCredential } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app'
+import { AuthErrorCodes, createUserWithEmailAndPassword, GoogleAuthProvider, sendEmailVerification, signInWithPopup, type UserCredential } from 'firebase/auth'
 
 import { useRules } from '~/composables/commons/useRules'
+import { useLogin } from '~/composables/commons/useLogin'
+
+import { useSnackbarStore } from '~/store/snackbar'
 
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 import { FirestoreUser, FirestoreUserPersonalData, useUsersService } from '~/composables/services/useUsersService'
@@ -178,14 +127,14 @@ import PasswordTextField from '~/components/commons/PasswordTextField.vue'
 
 const nuxtApp = useNuxtApp()
 
+const snackbarStore = useSnackbarStore()
+
 const usersService = useUsersService()
+const { handleSignOut } = useLogin()
 
 const loadingRegister = ref(false)
 
-const authenticatedUserCredential = ref<UserCredential>()
-
 const registerFormIsValid = ref(false)
-const fillProfileDataFormIsValid = ref(false)
 
 const rules = useRules()
 
@@ -204,10 +153,32 @@ async function handleValidateAuthenticatedUser (userCredential: UserCredential) 
   const userAlreadyExists = await usersService.checkIfExists(userCredential.user.uid)
 
   if (userAlreadyExists) {
-    await signOut(nuxtApp.$firebaseAuth)
+    await handleSignOut({ redirect: false })
+
+    snackbarStore.showErrorSnackbar('O e-mail informado já está em uso.')
+
     throw new Error('User already exists')
   } else {
-    authenticatedUserCredential.value = userCredential
+    if (!userCredential.user.email) {
+      throw new Error('Cannot found user email')
+    }
+
+    userCreationPayload.value.public.createdAt = new Date().toISOString()
+    userCreationPayload.value.public._id = userCredential.user.uid
+    userCreationPayload.value.public.role = 'Viewer'
+    userCreationPayload.value.public.completedRegistration = false
+
+    await usersService.create(userCredential.user.uid, { ...userCreationPayload.value.public })
+
+    await usersService
+      .useUserPrivateDataService(userCredential.user.uid)
+      .createPersonalData({
+        email: userCredential.user.email,
+        createdAt: new Date().toISOString(),
+        updatedAt: null,
+      })
+
+    reloadNuxtApp()
   }
 }
 
@@ -222,6 +193,7 @@ async function handleRegisterWithGoogle () {
     await handleValidateAuthenticatedUser(userCredential)
   } catch (err) {
     console.error(err)
+    snackbarStore.showErrorSnackbar()
   } finally {
     loadingRegister.value = false
   }
@@ -238,57 +210,17 @@ async function handleRegisterWithEmailAndPassword () {
     )
 
     await handleValidateAuthenticatedUser(userCredential)
+    await sendEmailVerification(userCredential.user)
   } catch (err) {
     console.error(err)
+
+    if (err instanceof FirebaseError && err.code === AuthErrorCodes.EMAIL_EXISTS) {
+      snackbarStore.showErrorSnackbar('O e-mail informado já está em uso.')
+    } else {
+      snackbarStore.showErrorSnackbar()
+    }
   } finally {
     loadingRegister.value = false
-  }
-}
-
-async function handleCompleteRegistration () {
-  try {
-    loadingRegister.value = true
-
-    if (!authenticatedUserCredential.value) {
-      throw new Error('Cannot found user data')
-    }
-
-    if (!authenticatedUserCredential.value.user.email) {
-      throw new Error('Cannot found user email')
-    }
-
-    await usersService.create(authenticatedUserCredential.value.user.uid, {
-      ...userCreationPayload.value.public,
-      _id: authenticatedUserCredential.value.user.uid,
-      createdAt: new Date().toISOString(),
-      role: 'Viewer',
-    })
-
-    await usersService
-      .useUserPrivateDataService(authenticatedUserCredential.value.user.uid)
-      .createPersonalData({
-        email: authenticatedUserCredential.value.user.email,
-        createdAt: new Date().toISOString(),
-        updatedAt: null,
-      })
-
-    reloadNuxtApp()
-  } catch (err) {
-    console.error(err)
-  } finally {
-    loadingRegister.value = false
-  }
-}
-
-async function handleCancel () {
-  try {
-    if (authenticatedUserCredential.value) {
-      await signOut(nuxtApp.$firebaseAuth)
-    }
-  } catch (err) {
-    console.error(err)
-  } finally {
-    await navigateTo({ path: '/auth/login' })
   }
 }
 </script>

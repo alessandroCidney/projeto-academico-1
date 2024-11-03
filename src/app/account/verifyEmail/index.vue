@@ -39,17 +39,19 @@
 </template>
 
 <script setup lang="ts">
-import { sendEmailVerification, signOut } from 'firebase/auth'
+import { sendEmailVerification } from 'firebase/auth'
 
 import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 
+import { useLogin } from '~/composables/commons/useLogin'
+
 import { useSnackbarStore } from '~/store/snackbar'
-import { useAccountStore } from '~/store/account'
 
 const nuxtApp = useNuxtApp()
 
+const { handleSignOut } = useLogin()
+
 const snackbarStore = useSnackbarStore()
-const accountStore = useAccountStore()
 
 const loadingSendEmail = ref(false)
 
@@ -68,16 +70,6 @@ async function handleSendEmailVerification () {
   } finally {
     loadingSendEmail.value = false
   }
-}
-
-async function handleSignOut () {
-  await signOut(nuxtApp.$firebaseAuth)
-
-  accountStore.setAuthUserData(undefined)
-  accountStore.setFirestoreUserData(undefined)
-  accountStore.setFirestoreUserPrivateData(undefined)
-
-  await navigateTo({ path: '/auth/login' })
 }
 </script>
 
