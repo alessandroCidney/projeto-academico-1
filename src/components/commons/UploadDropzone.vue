@@ -64,12 +64,18 @@ const currentFileUrl = computed(() => {
 async function handleUpdateSelectedFile (file: File) {
   const fileExtension = `.${file.name.split('.').pop()}`
 
-  if (defaultAllowedImageExtensions.split(', ').includes(fileExtension)) {
-    selectedFile.value = file
-    selectedFileUrl.value = await convertFileToBase64(file)
-  } else {
-    snackbarStore.showErrorSnackbar('Este formato de arquivo não é permitido')
+  if (!defaultAllowedImageExtensions.split(', ').includes(fileExtension)) {
+    return snackbarStore.showErrorSnackbar('Este formato de arquivo não é permitido')
   }
+
+  const fileSizeInMb = file.size / 1024 / 1024
+
+  if (fileSizeInMb > 5) {
+    return snackbarStore.showErrorSnackbar('No máximo 5MB')
+  }
+
+  selectedFile.value = file
+  selectedFileUrl.value = await convertFileToBase64(file)
 }
 
 function handleSelectFile () {
