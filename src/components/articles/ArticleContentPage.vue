@@ -100,6 +100,7 @@
       </v-btn>
 
       <v-btn
+        v-if="shareIsAvailable"
         variant="text"
         size="large"
         icon
@@ -107,6 +108,18 @@
       >
         <v-icon size="large">
           mdi-share-variant
+        </v-icon>
+      </v-btn>
+
+      <v-btn
+        v-else
+        variant="text"
+        size="large"
+        icon
+        @click="handleCopyUrl"
+      >
+        <v-icon size="large">
+          mdi-link-variant
         </v-icon>
       </v-btn>
     </div>
@@ -135,6 +148,8 @@ import ImageWithLoader from '~/components/commons/ImageWithLoader.vue'
 import { useAccountStore } from '~/store/account'
 import { useSnackbarStore } from '~/store/snackbar'
 
+import { copyToClipboard } from '~/utils'
+
 const router = useRouter()
 
 const props = defineProps({
@@ -155,6 +170,8 @@ const alreadyLiked = ref(false)
 const showComments = ref(false)
 
 const articleData = ref<Awaited<ReturnType<typeof props.service.get>>>()
+
+const shareIsAvailable = computed(() => !!navigator.share)
 
 onMounted(async () => {
   handleGet()
@@ -260,6 +277,16 @@ async function handleShare () {
     await navigator.share(shareData)
   } catch (err) {
     console.error(err)
+  }
+}
+
+async function handleCopyUrl () {
+  try {
+    await copyToClipboard(window.location.href)
+
+    snackbarStore.showSuccessSnackbar('Link da postagem copiado com sucesso!')
+  } catch {
+    snackbarStore.showErrorSnackbar('Erro ao copiar o link da postagem')
   }
 }
 </script>

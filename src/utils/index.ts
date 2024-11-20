@@ -50,3 +50,43 @@ export function convertFileToBase64 (file: File): Promise<string> {
     reader.readAsDataURL(file)
   })
 }
+
+export async function copyToClipboard (text: string) {
+  function fallbackCopyTextToClipboard () {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+
+    // Avoid scrolling to bottom
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.position = 'fixed'
+
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    let errorDuringCopy: unknown = null
+
+    try {
+      const successful = document.execCommand('copy')
+
+      if (!successful) {
+        errorDuringCopy = new Error('Error during copy')
+      }
+    } catch (err) {
+      errorDuringCopy = err
+    }
+
+    document.body.removeChild(textArea)
+
+    if (errorDuringCopy) {
+      throw errorDuringCopy
+    }
+  }
+
+  if (!navigator.clipboard) {
+    return fallbackCopyTextToClipboard()
+  }
+
+  await navigator.clipboard.writeText(text)
+}
