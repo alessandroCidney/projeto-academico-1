@@ -104,8 +104,8 @@ const rules = useRules()
 
 const showEditForm = ref(false)
 
-const emptyValue = props.item.options ? null : ''
-const newValueStr = ref(emptyValue)
+const emptyValue = computed(() => props.item.options ? null : '')
+const newValueStr = ref(emptyValue.value)
 
 const loadingEdit = ref(false)
 
@@ -117,12 +117,12 @@ async function handleSave () {
 
   await props.item.update?.(newValueStr.value as string)
 
-  newValueStr.value = emptyValue
+  newValueStr.value = emptyValue.value
   loadingEdit.value = false
 }
 
 function reset () {
-  newValueStr.value = emptyValue
+  newValueStr.value = emptyValue.value
   showEditForm.value = false
 }
 </script>
