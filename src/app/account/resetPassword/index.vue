@@ -74,7 +74,7 @@
           block
           @click="handleSendPasswordResetEmail"
         >
-          Receber link de redefinição por e-mail
+          Receber link de redefinição
         </v-btn>
       </div>
 

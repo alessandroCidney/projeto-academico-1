@@ -7,7 +7,7 @@
         variant="tonal"
       />
 
-      <h1 class="text-h3 font-weight-bold">
+      <h1 class="text-h4 font-weight-bold">
         Políticas e Termos
       </h1>
     </div>

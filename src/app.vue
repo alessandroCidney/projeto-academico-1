@@ -15,9 +15,9 @@
     v-else
   >
     <nuxt-page />
-
-    <app-snackbar />
   </nuxt-layout>
+
+  <app-snackbar />
 </template>
 
 <script setup lang="ts">

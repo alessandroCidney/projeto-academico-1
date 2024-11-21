@@ -8,8 +8,12 @@
 
   <login-page-container v-else>
     <div class="font-weight-bold mb-5 text-h5">
-      Redefinição de senha
+      Redefinição de senha via link
     </div>
+
+    <p class="mb-5">
+      Para continuar a redefinição de senha via link, informe a nova senha desejada.
+    </p>
 
     <v-form
       v-model="formIsValid"
@@ -74,6 +78,8 @@ import { useSnackbarStore } from '~/store/snackbar'
 
 import { useRules } from '~/composables/commons/useRules'
 
+import { wait } from '~/utils'
+
 const props = defineProps({
   actionCode: { type: String, required: true },
 })
@@ -123,7 +129,9 @@ async function handleResetPassword () {
 
     snackbarStore.showSuccessSnackbar('Senha atualizada com sucesso!')
 
-    await navigateTo({ path: '/' })
+    await wait(2000)
+
+    window.location.href = window.location.origin
   } catch (err) {
     console.error(err)
 

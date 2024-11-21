@@ -10,8 +10,8 @@
         flat
         @click="$router.push(`/articles/${item._id}`)"
       >
-        <div class="d-flex align-start justify-start">
-          <div>
+        <div class="d-flex align-center justify-start h-100">
+          <div class="align-self-start">
             <image-with-loader
               :src="item.imageUrl || '/images/illustrations/article-with-background.jpg'"
               height="110px"
@@ -21,8 +21,8 @@
             />
           </div>
 
-          <div>
-            <v-card-subtitle>
+          <div class="align-self-start overflow-hidden">
+            <v-card-subtitle class="overflow-visible">
               <v-chip
                 v-for="(itemTag, itemTagIndex) in item.tags"
                 :key="`itemTag${itemTagIndex}`"
@@ -47,7 +47,7 @@
             <v-btn
               icon="mdi-chevron-right"
               variant="text"
-              size="large"
+              size="x-large"
             />
           </div>
         </div>
