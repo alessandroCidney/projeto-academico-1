@@ -36,7 +36,7 @@
         <v-combobox
           v-model="userUpdatePayload.position"
           :rules="[rules.required]"
-          :items="['Avaliador', 'Estudante', 'Visitante', 'Outro']"
+          :items="positions"
           offset="top"
           label="Cargo"
           placeholder="Informe o seu cargo"
@@ -77,6 +77,8 @@ import LoginPageContainer from '~/components/auth/LoginPageContainer.vue'
 import { useUsersService } from '~/composables/services/useUsersService'
 import { useLogin } from '~/composables/commons/useLogin'
 import { useRules } from '~/composables/commons/useRules'
+
+import { positions } from '~/data/arrays'
 
 import { useSnackbarStore } from '~/store/snackbar'
 import { useAccountStore } from '~/store/account'

@@ -97,6 +97,8 @@ import RemoveMyAccountDialog from './components/RemoveMyAccountDialog.vue'
 
 import UserAvatar from '~/components/commons/UserAvatar.vue'
 
+import { positions } from '~/data/arrays'
+
 import { useAccountStore } from '~/store/account'
 import { useSnackbarStore } from '~/store/snackbar'
 
@@ -116,12 +118,14 @@ const items = computed(() => [
     title: 'Nome',
     value: accountStore.firestoreUserData?.displayName,
     allowEdition: true,
-    update: updateDisplayName,
+    update: (newPropertyValue: string) => updateUserDataProperty('displayName', newPropertyValue),
   },
   {
     title: 'Cargo',
     value: accountStore.firestoreUserData?.position,
-    allowEdition: false,
+    allowEdition: true,
+    update: (newPropertyValue: string) => updateUserDataProperty('position', newPropertyValue),
+    options: positions,
   },
   {
     title: 'E-mail',
@@ -130,7 +134,7 @@ const items = computed(() => [
   },
 ])
 
-async function updateDisplayName (newValue: string) {
+async function updateUserDataProperty (userDataProperty: 'displayName' | 'position', newValue: string) {
   try {
     let firestoreUserData = accountStore.firestoreUserData
     const authUserData = accountStore.authUserData
@@ -138,7 +142,8 @@ async function updateDisplayName (newValue: string) {
     if (firestoreUserData && authUserData) {
       firestoreUserData = {
         ...firestoreUserData,
-        displayName: newValue,
+        [userDataProperty]: newValue,
+        updatedAt: new Date().toISOString(),
       }
 
       await usersService.update(authUserData.uid, firestoreUserData)

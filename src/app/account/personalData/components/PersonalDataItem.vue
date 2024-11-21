@@ -24,7 +24,37 @@
     v-model="validModel"
     @submit.prevent="handleSave"
   >
+    <v-combobox
+      v-if="item.options"
+      v-model="newValueStr"
+      :items="item.options"
+      :rules="[rules.required, rules.maxLength(200)]"
+      :placeholder="`Novo ${item.title.toLowerCase()}`"
+      class="mt-3"
+    >
+      <template #append>
+        <v-btn
+          variant="flat"
+          color="error"
+          class="mr-2"
+          icon="mdi-close"
+          size="small"
+          @click="reset"
+        />
+
+        <v-btn
+          :disabled="!validModel"
+          type="submit"
+          variant="flat"
+          color="success"
+          icon="mdi-check"
+          size="small"
+        />
+      </template>
+    </v-combobox>
+
     <v-text-field
+      v-else
       v-model="newValueStr"
       :rules="[rules.required, rules.maxLength(200)]"
       :placeholder="`Novo ${item.title.toLowerCase()}`"
@@ -63,6 +93,7 @@ interface PersonalDataItem {
   value?: string
   allowEdition: boolean
   update?: (newValue: string) => Promise<void>
+  options?: string[]
 }
 
 const props = defineProps({
@@ -72,7 +103,9 @@ const props = defineProps({
 const rules = useRules()
 
 const showEditForm = ref(false)
-const newValueStr = ref('')
+
+const emptyValue = props.item.options ? null : ''
+const newValueStr = ref(emptyValue)
 
 const loadingEdit = ref(false)
 
@@ -82,14 +115,14 @@ async function handleSave () {
   loadingEdit.value = true
   showEditForm.value = false
 
-  await props.item.update?.(newValueStr.value)
+  await props.item.update?.(newValueStr.value as string)
 
-  newValueStr.value = ''
+  newValueStr.value = emptyValue
   loadingEdit.value = false
 }
 
 function reset () {
-  newValueStr.value = ''
+  newValueStr.value = emptyValue
   showEditForm.value = false
 }
 </script>
